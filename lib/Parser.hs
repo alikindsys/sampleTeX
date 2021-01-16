@@ -7,12 +7,12 @@ import Control.Monad
 data TexObject = Section String
                | NewPage
                | Text String
-               | List [Either TexObject SimpleTexObject]
+               | List [Either SimpleTexObject TexObject]
                deriving Show
 
 data SimpleTexObject = Variable { name :: String , value :: String }
                      | StringInterpolation SimpleTexFunction
-                     | ComplexString [Either TexObject SimpleTexObject]
+                     | ComplexString [Either SimpleTexObject TexObject]
                      deriving Show
 
 data SimpleTexFunction = Chem String 
