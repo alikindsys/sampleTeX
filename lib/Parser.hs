@@ -65,7 +65,20 @@ parseSection = do
 --- SimpleTexObject Parsers
 ---
 
-parseSimpleTexObject = try parseVariable <|> parseStringInterpolation
+parseSimpleTexObject = try parseVariable <|> try parseComplexString <|> parseStringInterpolation
+
+complexStringAllowedTexObjects = try parseTextTillEndOfLiteral <|> parseText
+complexStringAllowedSimpleTexObjects = parseStringInterpolation
+
+complexStringAllowedObjects = parseEither complexStringAllowedSimpleTexObjects complexStringAllowedTexObjects
+
+parseComplexString :: Parser SimpleTexObject
+parseComplexString = do
+    void $ string "$\""
+    value <- manyTill complexStringAllowedObjects (char '"')
+    void spaces
+    return $ ComplexString value 
+
 
 parseStringInterpolation :: Parser SimpleTexObject
 parseStringInterpolation = do
