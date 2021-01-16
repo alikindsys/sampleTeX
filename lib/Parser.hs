@@ -68,6 +68,10 @@ parseChemFunction = do
     void spaces
     Chem <$> parseStringLiteral
 
+---
+--- Internal Helpers
+---
+
 parseStringLiteral :: Parser String
 parseStringLiteral = do
     void $ string "\""
@@ -75,3 +79,6 @@ parseStringLiteral = do
     void $ string "\""
     void spaces
     return value
+
+parseTillSeparator :: Parser String
+parseTillSeparator = parseBounded (\c -> c /= ';' && c /= '\n')
