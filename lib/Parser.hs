@@ -6,7 +6,7 @@ import Control.Monad
 
 data TexObject = Section String
                | NewPage
-               | SimpleText String
+               | Text String
                | List [Either TexObject SimpleTexObject]
                deriving Show
 
