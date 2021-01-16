@@ -20,6 +20,9 @@ data SimpleTexFunction = Chem String
                        deriving Show
 
 
+parseObject = parseEither parseSimpleTexObject parseTexObject 
+parseTexObject = parseSection <|> parsePage <|> parseText
+
 parseText :: Parser TexObject
 parseText = do
     str <- parseBounded (\c -> c /= '\n' && c /= '$')
@@ -49,6 +52,8 @@ parseSection = do
 --- SimpleTexObject Parsers
 ---
 
+parseSimpleTexObject = try parseVariable <|> parseStringInterpolation
+
 parseStringInterpolation :: Parser SimpleTexObject
 parseStringInterpolation = do
     void $ string "${"
@@ -63,6 +68,8 @@ parseStringInterpolation = do
 
 parseVariable :: Parser SimpleTexObject
 parseVariable = do
+    string "var"
+    spaces
     c <- firstChar
     str <- many nonFirstChar
     void spaces
