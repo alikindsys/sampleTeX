@@ -18,6 +18,12 @@ data SimpleTexObject = Variable { name :: String , value :: String }
 data SimpleTexFunction = Chem String 
                        | Identifier String 
 
+---
+--- SimpleTexFunction Parsers
+---
+
+parseFunction :: Parser SimpleTexFunction
+parseFunction = try parseChemFunction <|> parseIdentifierFunction
 
 parseIdentifierFunction :: Parser SimpleTexFunction
 parseIdentifierFunction = do
