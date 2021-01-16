@@ -2,6 +2,10 @@ module Parser(
     TexObject(..)
 ) where
 
+import Utils
+import Text.Parsec
+import Control.Monad
+
 data TexObject = Section String
                | NewPage
                | SimpleText String
@@ -14,3 +18,10 @@ data SimpleTexObject = Variable { name :: String , value :: String }
 data SimpleTexFunction = Chem String 
                        | Identifier String 
 
+parseStringLiteral :: Parser String
+parseStringLiteral = do
+    void $ string "\""
+    value <- parseUntil '"'
+    void $ string "\""
+    void spaces
+    return value
