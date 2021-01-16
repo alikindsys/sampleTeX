@@ -20,6 +20,18 @@ data SimpleTexFunction = Chem String
                        deriving Show
 
 
+parseSection :: Parser TexObject
+parseSection = do
+    void $ string "sec"
+    void spaces
+    value <- try parseStringLiteral <|> parseTillSeparator
+    void spaces
+    return $ Section value
+
+---
+--- SimpleTexObject Parsers
+---
+
 parseStringInterpolation :: Parser SimpleTexObject
 parseStringInterpolation = do
     void $ string "${"
