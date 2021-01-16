@@ -21,7 +21,15 @@ data SimpleTexFunction = Chem String
 
 
 parseObject = parseEither parseSimpleTexObject parseTexObject 
-parseTexObject = parseSection <|> parsePage <|> parseText
+parseTexObject = try parseSection <|> try parsePage <|> try parseList <|> parseText
+
+parseList :: Parser TexObject
+parseList = do
+    void $ string "li"
+    void spaces
+    value <- manyTill parseObject (string "il")
+    void spaces
+    return $ List value 
 
 parseText :: Parser TexObject
 parseText = do
