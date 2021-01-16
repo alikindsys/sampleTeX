@@ -7,3 +7,10 @@ data TexObject = Section String
                | SimpleText String
                | List [TexObject]
 
+data SimpleTexObject = Variable { name :: String , value :: String }
+                     | StringInterpolation SimpleTexFunction
+                     | ComplexString [Either TexObject SimpleTexObject]
+
+data SimpleTexFunction = Chem String 
+                       | Identifier String 
+
