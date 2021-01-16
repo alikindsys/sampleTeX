@@ -20,6 +20,12 @@ data SimpleTexFunction = Chem String
                        deriving Show
 
 
+parsePage :: Parser TexObject
+parsePage = do
+    void $ string "page"
+    void spaces 
+    return NewPage
+
 parseSection :: Parser TexObject
 parseSection = do
     void $ string "sec"
