@@ -18,6 +18,13 @@ data SimpleTexObject = Variable { name :: String , value :: String }
 data SimpleTexFunction = Chem String 
                        | Identifier String 
 
+
+parseChemFunction :: Parser SimpleTexFunction
+parseChemFunction = do
+    void $ string "chem"
+    void spaces
+    Chem <$> parseStringLiteral
+
 parseStringLiteral :: Parser String
 parseStringLiteral = do
     void $ string "\""
