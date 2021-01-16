@@ -20,6 +20,17 @@ data SimpleTexFunction = Chem String
                        deriving Show
 
 
+parseText :: Parser TexObject
+parseText = do
+    str <- parseBounded (\c -> c /= '\n' && c /= '$')
+    spaces
+    return $ Text str
+
+parseTextTillEndOfLiteral :: Parser TexObject
+parseTextTillEndOfLiteral = do
+    str <- parseBounded (\c -> c /= '"' && c /= '$')
+    return $ Text str
+
 parsePage :: Parser TexObject
 parsePage = do
     void $ string "page"
