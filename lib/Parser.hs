@@ -8,15 +8,16 @@ data TexObject = Section String
                | NewPage
                | SimpleText String
                | List [TexObject]
-               
+               deriving Show
 
 data SimpleTexObject = Variable { name :: String , value :: String }
                      | StringInterpolation SimpleTexFunction
                      | ComplexString [Either TexObject SimpleTexObject]
-                     
+                     deriving Show
+
 data SimpleTexFunction = Chem String 
                        | Identifier String 
-                       
+                       deriving Show
 
 
 
