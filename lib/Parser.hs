@@ -82,7 +82,7 @@ parseComplexString = do
 
 parseStringInterpolation :: Parser SimpleTexObject
 parseStringInterpolation = do
-    void $ string "${"
+    void $ char '{'
     expr <- parseUntil '}'
     void $ string "}"
     void spaces
