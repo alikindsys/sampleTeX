@@ -20,6 +20,17 @@ data SimpleTexFunction = Chem String
                        deriving Show
 
 
+parseStringInterpolation :: Parser SimpleTexObject
+parseStringInterpolation = do
+    void $ string "${"
+    expr <- parseUntil '}'
+    void $ string "}"
+    void spaces
+    let result = parse parseFunction "" expr
+    case result of
+        Right func -> return $ StringInterpolation func
+        Left err -> fail $ show err
+
 
 parseVariable :: Parser SimpleTexObject
 parseVariable = do
