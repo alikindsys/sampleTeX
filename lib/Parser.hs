@@ -19,6 +19,16 @@ data SimpleTexFunction = Chem String
                        | Identifier String 
 
 
+parseIdentifierFunction :: Parser SimpleTexFunction
+parseIdentifierFunction = do
+    fc <- firstChar
+    nfc <- many nonFirstChar
+    void spaces
+    return $ Identifier (fc:nfc)
+    where
+        firstChar = letter <|> char '_'
+        nonFirstChar = alphaNum <|> char '_'
+
 parseChemFunction :: Parser SimpleTexFunction
 parseChemFunction = do
     void $ string "chem"
