@@ -1,6 +1,4 @@
-module Parser(
-    TexObject(..)
-) where
+module Parser where
 
 import Utils
 import Text.Parsec
@@ -10,13 +8,30 @@ data TexObject = Section String
                | NewPage
                | SimpleText String
                | List [TexObject]
+               
 
 data SimpleTexObject = Variable { name :: String , value :: String }
                      | StringInterpolation SimpleTexFunction
                      | ComplexString [Either TexObject SimpleTexObject]
-
+                     
 data SimpleTexFunction = Chem String 
                        | Identifier String 
+                       
+
+
+
+parseVariable :: Parser SimpleTexObject
+parseVariable = do
+    c <- firstChar
+    str <- many nonFirstChar
+    void spaces
+    void $ char '='
+    void spaces
+    Variable (c:str) <$> parseStringLiteral
+    where
+        firstChar = letter <|> char '_'
+        nonFirstChar = alphaNum <|> char '_'
+
 
 ---
 --- SimpleTexFunction Parsers
