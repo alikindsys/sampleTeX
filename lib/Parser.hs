@@ -7,7 +7,7 @@ import Control.Monad
 data TexObject = Section String
                | NewPage
                | SimpleText String
-               | List [TexObject]
+               | List [Either TexObject SimpleTexObject]
                deriving Show
 
 data SimpleTexObject = Variable { name :: String , value :: String }
