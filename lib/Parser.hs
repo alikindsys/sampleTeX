@@ -2,6 +2,7 @@ module Parser ( TexObject(..)
               , SimpleTexObject(..)
               , SimpleTexFunction(..)
               , parseObject
+              , parseSampleTex
               ) where
 
 import Utils
@@ -26,6 +27,15 @@ data SimpleTexFunction = Chem String
 
 parseObject = parseEither parseSimpleTexObject parseTexObject 
 
+parseSampleTex :: String -> [Either SimpleTexObject TexObject]
+
+parseSampleTex [] = []
+
+parseSampleTex str = do
+    let either = parseWithLeftOver parseObject str
+    case either of
+        Right (item, rest) ->  item : parseSampleTex rest
+        Left err -> error $ show err
 ---
 --- TexObject Parsers
 ---
