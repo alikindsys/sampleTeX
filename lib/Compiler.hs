@@ -8,7 +8,7 @@ import Data.Map (Map)
 import qualified Data.Map as Map
 
 compile :: Document -> String 
-compile doc = concatMap toTex reduced
+compile doc = unlines (map toTex reduced)
     where reduced = map (replaceOrReduce doc) (body doc)
 
 replaceOrReduce :: Document -> Either SimpleTexObject TexObject -> TexObject
