@@ -1,4 +1,4 @@
-module Compiler (compile) where
+module Compiler (compile, reduce, replace, replaceOrReduce) where
 
 import Grammar
 import Parser
@@ -33,5 +33,7 @@ replace doc (Text s)
             | s == ";" = Text ""
             | otherwise = Text s
             where vars = variables doc
+
+replace doc (List xs) = List $ map (Right <$> replaceOrReduce doc) xs 
 
 replace doc x = x
