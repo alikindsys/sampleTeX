@@ -42,13 +42,13 @@ parseList = do
 
 parseText :: Parser TexObject
 parseText = do
-    str <- parseBounded (\c -> c /= '\n' && c /= '$')
+    str <- parseBounded (\c -> c /= '\n' && c /= '{')
     spaces
     return $ Text str
 
 parseTextTillEndOfLiteral :: Parser TexObject
 parseTextTillEndOfLiteral = do
-    str <- parseBounded (\c -> c /= '"' && c /= '$')
+    str <- parseBounded (\c -> c /= '"' && c /= '{')
     return $ Text str
 
 parsePage :: Parser TexObject
