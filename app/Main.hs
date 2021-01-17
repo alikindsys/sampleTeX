@@ -26,8 +26,8 @@ stxToTex path = do
     let unsafe = parseSampleTex contents
     let safe = checkObjects unsafe
     let tex = compile safe
-    createAndWriteFile ("./compiled/" ++ takeFileName path ++ ".tex") tex
-    putStrLn $ "Finished compiling " ++ takeFileName path
+    createAndWriteFile ("./compiled/" ++ takeBaseName path ++ ".tex") tex
+    putStrLn $ "Finished compiling " ++ takeBaseName path
 
 
 createAndWriteFile :: FilePath -> String -> IO ()
