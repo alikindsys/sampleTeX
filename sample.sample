@@ -1,0 +1,22 @@
+var author = "roridev"
+
+sec SampleTeX is awesome(ish)~
+
+could be better once i implement more TeX
+
+li
+	this is an item on a list
+	$"SampleTeX/samplec by : {author}"
+	li
+		does the inner list looks nice?
+		only one way to find out.
+		li
+			does the inner inner list looks nice?
+			only one way to find out.
+		il
+	il
+il
+
+another object
+something else here
+page
