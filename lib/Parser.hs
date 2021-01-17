@@ -1,4 +1,8 @@
-module Parser where
+module Parser ( TexObject(..)
+              , SimpleTexObject(..)
+              , SimpleTexFunction(..)
+              , parseObject
+              ) where
 
 import Utils
 import Text.Parsec
