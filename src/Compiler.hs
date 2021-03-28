@@ -5,6 +5,7 @@ import Parser
 import Mappings
 
 import Data.Map (Map)
+import System.Posix.Files (fileExist)
 import qualified Data.Map as Map
 
 compile :: Document -> String 
@@ -37,3 +38,18 @@ replace doc (Text s)
 replace doc (List xs) = List $ map (Right <$> replaceOrReduce doc) xs 
 
 replace doc x = x
+
+parseFile :: ValidFile -> IO ValidFile 
+parseFile (Tex a _) =
+    do 
+        contents <- readFile a
+        pure $ Tex a contents
+
+parseFile (Sample a _) = 
+    do 
+        contents <- readFile a
+        let unsafe = parseSampleTex contents
+        let safe = checkObjects unsafe
+        let tex = compile safe
+        pure $ Tex a tex
+
