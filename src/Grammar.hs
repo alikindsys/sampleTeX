@@ -1,4 +1,5 @@
 module Grammar  ( Document(..)
+                , ValidFile(..)
                 , blankDocument
                 , checkObjects
                 ) where
