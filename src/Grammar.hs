@@ -6,6 +6,7 @@ module Grammar  ( Document(..)
 import Parser
 import Data.Map (Map)
 import qualified Data.Map as Map
+import System.FilePath (takeExtension)
 
 data Document
     = SampleTex {variables :: Map String String, imports :: Map ValidFile String , body :: [Either SimpleTexObject TexObject]}
@@ -32,3 +33,11 @@ checkGrammar doc (Left b) = SampleTex (variables doc) (imports doc) (Left b : bo
 checkObjects :: [Either SimpleTexObject TexObject] -> Document
 checkObjects x = SampleTex (variables doc) (imports doc) (reverse $ body doc)
     where doc = foldl checkGrammar blankDocument x
+
+
+checkFile :: String -> Maybe ValidFile
+checkFile filename
+    | ext == ".tex" = Just $ Tex filename
+    | ext == ".sample" = Just $ Sample filename
+    | otherwise  = Nothing 
+    where ext = takeExtension filename 
