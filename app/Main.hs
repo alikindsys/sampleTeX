@@ -25,7 +25,8 @@ stxToTex path = do
     contents <- readFile path
     let unsafe = parseSampleTex contents
     let safe = checkObjects unsafe
-    let tex = compile safe
+    lnk <- link safe
+    let tex = compile lnk
     createAndWriteFile ("./compiled/" ++ takeBaseName path ++ ".tex") tex
     putStrLn $ "Finished compiling " ++ takeBaseName path
 
