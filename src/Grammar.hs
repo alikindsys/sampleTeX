@@ -33,7 +33,7 @@ checkGrammar doc (Left (Variable name value)) =
 checkGrammar doc (Left (ImportStatement path)) = 
     if isJust file then
         if Map.notMember path (imports doc) then
-            SampleTex (variables doc) (Map.insert path (fromJust  file) $ imports doc) $ body doc
+            SampleTex (variables doc) (Map.insert path (fromJust file) $ imports doc) (Left (ImportStatement path) : body doc)
         else
             error $ "Duplicated Import Statement : " ++ path
     else
