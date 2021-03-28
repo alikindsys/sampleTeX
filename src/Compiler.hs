@@ -26,6 +26,12 @@ reduce doc (StringInterpolation (Identifier i)) =
 reduce doc (StringInterpolation (Chem c)) =
     Text $ "\\ce{"++c++"}"
 
+reduce doc (ImportStatement path) =
+    if Map.notMember path (imports doc) then
+        error $ "Path not found on ImportTable : " ++ path ++ "\nHave you forgotten to call link?"
+    else
+        Text . serialize $ imports doc Map.! path
+
 reduce doc (ComplexString xs) = Text $ concatMap (toTex . replaceOrReduce doc) xs
 
 replace :: Document -> TexObject -> TexObject
