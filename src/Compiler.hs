@@ -75,6 +75,12 @@ parseFile (Sample a _) =
         contents <- readFile a
         let unsafe = parseSampleTex contents
         let safe = checkObjects unsafe
-        let tex = compile safe
+        -- This can generate an hellhole and i wont deal with dependency hell now.
+        -- This is stupid C-like import. You really need to be dumb to cause that by accident.
+        -- Therefore, if you end up hanging yourself and the file doesn't compile or whatever.
+        -- In the words of Linus Torvalds towards Nvdia: fuck you.
+        -- I'll deal with that later.
+        lnk <- link safe
+        let tex = compile lnk
         pure $ Tex a tex
 
