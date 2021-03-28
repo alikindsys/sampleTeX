@@ -1,4 +1,4 @@
-module Compiler (compile, reduce, replace, replaceOrReduce) where
+module Compiler (compile, link, reduce, replace, replaceOrReduce) where
 
 import Grammar
 import Parser
