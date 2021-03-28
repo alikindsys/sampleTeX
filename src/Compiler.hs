@@ -39,6 +39,25 @@ replace doc (List xs) = List $ map (Right <$> replaceOrReduce doc) xs
 
 replace doc x = x
 
+link :: Document -> IO Document 
+link doc =
+    if Map.null (imports doc) then
+        pure doc
+    else
+        do
+            x <- mapM fileExist keys
+            let invalidBois = filter (not . fst) (zip x keys)
+            if  not $ null invalidBois then
+                error $ "Linker Errror : Files doesn't exist : " ++ unlines (map snd invalidBois)
+            else
+                do
+                    y <- mapM parseFile values
+                    pure $ SampleTex (variables doc) (Map.fromAscList $ zip keys y) (body doc)
+                    
+    where keys = Map.keys (imports doc)
+          values = Map.elems (imports doc)
+
+
 parseFile :: ValidFile -> IO ValidFile 
 parseFile (Tex a _) =
     do 
