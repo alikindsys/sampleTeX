@@ -23,6 +23,7 @@ checkGrammar doc (Left (Variable name value)) =
     else
         error $ "Duplicated Variable Declaration : " ++ name
 
+
 checkGrammar doc (Left b) = SampleTex (variables doc) (Left b : body doc)
 
 checkObjects :: [Either SimpleTexObject TexObject] -> Document

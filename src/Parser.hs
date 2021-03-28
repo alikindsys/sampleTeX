@@ -86,6 +86,7 @@ complexStringAllowedSimpleTexObjects = parseStringInterpolation
 
 complexStringAllowedObjects = parseEither complexStringAllowedSimpleTexObjects complexStringAllowedTexObjects
 
+
 parseComplexString :: Parser SimpleTexObject
 parseComplexString = do
     void $ string "$\""
