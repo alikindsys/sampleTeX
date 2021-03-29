@@ -40,6 +40,8 @@ library:
     - text-replace
     - directory
     - filepath
+    - unix
+    - extra
 
 executables:
   samplec:
