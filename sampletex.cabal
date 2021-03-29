@@ -39,10 +39,12 @@ library
       base >=4.11 && <10
     , containers
     , directory
+    , extra
     , filepath
     , parsec
     , rio >=0.1.12.0
     , text-replace
+    , unix
   default-language: Haskell2010
 
 executable samplec

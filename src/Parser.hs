@@ -18,6 +18,7 @@ data TexObject = Section String
 data SimpleTexObject = Variable { name :: String , value :: String }
                      | StringInterpolation SimpleTexFunction
                      | ComplexString [Either SimpleTexObject TexObject]
+                     | ImportStatement String
                      deriving Show
 
 data SimpleTexFunction = Chem String 
@@ -79,12 +80,21 @@ parseSection = do
 --- SimpleTexObject Parsers
 ---
 
-parseSimpleTexObject = try parseVariable <|> try parseComplexString <|> parseStringInterpolation
+parseSimpleTexObject = try parseVariable <|> try parseImportStatement <|> try parseComplexString <|> parseStringInterpolation
 
 complexStringAllowedTexObjects = try parseTextTillEndOfLiteral <|> parseText
 complexStringAllowedSimpleTexObjects = parseStringInterpolation
 
 complexStringAllowedObjects = parseEither complexStringAllowedSimpleTexObjects complexStringAllowedTexObjects
+
+
+parseImportStatement :: Parser SimpleTexObject
+parseImportStatement = do
+    void $ string "import"
+    void spaces
+    path <- parseStringLiteral
+    void spaces
+    return $ ImportStatement path
 
 
 parseComplexString :: Parser SimpleTexObject
