@@ -167,5 +167,16 @@ parseStringLiteral = do
     void spaces
     return value
 
+parseIdentifier :: Parser String
+parseIdentifier = do
+    c <- firstChar
+    str <- many nonFirstChar
+    void spaces
+    return (c:str)
+    where
+        firstChar = letter <|> char '_'
+        nonFirstChar = alphaNum <|> char '_'
+
+
 parseTillSeparator :: Parser String
 parseTillSeparator = parseBounded (\c -> c /= ';' && c /= '\n')
