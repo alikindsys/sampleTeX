@@ -121,15 +121,10 @@ parseVariable :: Parser SimpleTexObject
 parseVariable = do
     string "var"
     spaces
-    c <- firstChar
-    str <- many nonFirstChar
-    void spaces
+    ident <- parseIdentifier
     void $ char '='
     void spaces
-    Variable (c:str) <$> parseStringLiteral
-    where
-        firstChar = letter <|> char '_'
-        nonFirstChar = alphaNum <|> char '_'
+    Variable ident <$> parseStringLiteral
 
 
 ---
