@@ -40,6 +40,14 @@ checkGrammar doc (Left (ImportStatement path)) =
         error $ "Unsuported file type : " ++ path
     where file = checkFile path
 
+checkGrammar doc (Left (OutStatment v)) =
+    if null failure then
+        SampleTex (variables doc) (imports doc) ( successes ++ body doc)
+    else
+        error $ "Attempted exporting undeclared variables. Variables :\n" ++ unlines failure
+    where (success,failure) = checkVariables v (variables doc)
+          successes = map (\x -> Right . Text $ "\\newcommand{\\" ++ x ++ "}{"++ variables doc Map.! x ++ "}") success
+
 checkGrammar doc (Left b) = SampleTex (variables doc) (imports doc) (Left b : body doc)
 
 checkObjects :: [Either SimpleTexObject TexObject] -> Document
