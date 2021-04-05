@@ -19,6 +19,7 @@ data SimpleTexObject = Variable { name :: String , value :: String }
                      | StringInterpolation SimpleTexFunction
                      | ComplexString [Either SimpleTexObject TexObject]
                      | ImportStatement String
+                     | OutStatment [String]
                      deriving Show
 
 data SimpleTexFunction = Chem String 
@@ -80,13 +81,30 @@ parseSection = do
 --- SimpleTexObject Parsers
 ---
 
-parseSimpleTexObject = try parseVariable <|> try parseImportStatement <|> try parseComplexString <|> parseStringInterpolation
+parseSimpleTexObject = try parseVariable <|> try parseImportStatement <|> try parseOutStatment <|> try parseComplexString <|> parseStringInterpolation
 
 complexStringAllowedTexObjects = try parseTextTillEndOfLiteral <|> parseText
 complexStringAllowedSimpleTexObjects = parseStringInterpolation
 
 complexStringAllowedObjects = parseEither complexStringAllowedSimpleTexObjects complexStringAllowedTexObjects
 
+
+parseOutStatment = try parseListOutStatment <|> parseSingletonOutStatment
+
+parseSingletonOutStatment :: Parser SimpleTexObject
+parseSingletonOutStatment = do
+    void $ string "out"
+    void spaces 
+    ident <- parseIdentifier
+    return $ OutStatment [ident]
+
+parseListOutStatment :: Parser SimpleTexObject
+parseListOutStatment = do
+    void $ string "out"
+    void spaces 
+    idents <- manyTill parseIdentifier (char ';')
+    void spaces
+    return $ OutStatment idents
 
 parseImportStatement :: Parser SimpleTexObject
 parseImportStatement = do
@@ -121,15 +139,10 @@ parseVariable :: Parser SimpleTexObject
 parseVariable = do
     string "var"
     spaces
-    c <- firstChar
-    str <- many nonFirstChar
-    void spaces
+    ident <- parseIdentifier
     void $ char '='
     void spaces
-    Variable (c:str) <$> parseStringLiteral
-    where
-        firstChar = letter <|> char '_'
-        nonFirstChar = alphaNum <|> char '_'
+    Variable ident <$> parseStringLiteral
 
 
 ---
@@ -140,15 +153,8 @@ parseFunction :: Parser SimpleTexFunction
 parseFunction = try parseChemFunction <|> parseIdentifierFunction
 
 parseIdentifierFunction :: Parser SimpleTexFunction
-parseIdentifierFunction = do
-    fc <- firstChar
-    nfc <- many nonFirstChar
-    void spaces
-    return $ Identifier (fc:nfc)
-    where
-        firstChar = letter <|> char '_'
-        nonFirstChar = alphaNum <|> char '_'
-
+parseIdentifierFunction = 
+    Identifier <$> parseIdentifier
 parseChemFunction :: Parser SimpleTexFunction
 parseChemFunction = do
     void $ string "chem"
@@ -166,6 +172,17 @@ parseStringLiteral = do
     void $ string "\""
     void spaces
     return value
+
+parseIdentifier :: Parser String
+parseIdentifier = do
+    c <- firstChar
+    str <- many nonFirstChar
+    void spaces
+    return (c:str)
+    where
+        firstChar = letter <|> char '_'
+        nonFirstChar = alphaNum <|> char '_'
+
 
 parseTillSeparator :: Parser String
 parseTillSeparator = parseBounded (\c -> c /= ';' && c /= '\n')
