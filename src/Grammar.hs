@@ -53,3 +53,13 @@ checkFile filename
     | ext == ".sample" = Just $ Sample filename ""
     | otherwise  = Nothing 
     where ext = takeExtension filename 
+
+checkVariables :: [String] -> Map String String -> ([String], [String])
+checkVariables [] _ = ([],[])
+checkVariables (var:xs) m =
+    if Map.notMember var m then
+        (success, var:failure)
+    else
+        (var:success, failure)
+    where success = fst $ checkVariables xs m
+          failure = snd $ checkVariables xs m 
