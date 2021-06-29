@@ -5,7 +5,7 @@ import Parser
 import Mappings
 
 import Data.Map (Map)
-import System.Posix.Files (fileExist)
+import System.PosixCompat.Files (fileExist)
 import qualified Data.Map as Map
 
 compile :: Document -> String 
