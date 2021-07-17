@@ -18,7 +18,7 @@
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
 resolver:
-  url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/17/7.yaml
+  url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/0.yaml
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -36,7 +36,7 @@ packages:
 # forks / in-progress versions pinned to a git hash. For example:
 #
 extra-deps:
-  - text-replace-0.0.0.6@sha256:1da9fd389da635594e65671499c045b48bc3fdd985e18a5c69cc9c9a02ad5fac,2209
+  - text-replace-0.1@sha256:9c1968fc882ef597d457d42b71a17f75c9764c60387339f35eb63d29914d7c59,1998
 # - git: https://github.com/commercialhaskell/stack.git
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #

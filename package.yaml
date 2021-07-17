@@ -40,7 +40,7 @@ library:
     - text-replace
     - directory
     - filepath
-    - unix
+    - unix-compat
     - extra
 
 executables:
