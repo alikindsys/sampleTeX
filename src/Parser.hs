@@ -21,6 +21,7 @@ data SimpleTexObject = Variable { name :: String , value :: String }
                      | ComplexString [Either SimpleTexObject TexObject]
                      | ImportStatement String
                      | OutStatment [String]
+                     | InlineListSeparator
                      deriving Show
 
 data SimpleTexFunction = Chem String 
