@@ -54,6 +54,16 @@ parseList = do
     void spaces
     return $ List value 
 
+-- [a,, b,, c]
+-- List ["a,, b,, c"]
+-- I need to add a list separator token and thats it?
+parseInlineList :: Parser TexObject
+parseInlineList = do
+  void $ char '['
+  xs <- manyTill parseObject (string "]")
+  void spaces
+  pure $ List xs 
+
 parseText :: Parser TexObject
 parseText = do
 
