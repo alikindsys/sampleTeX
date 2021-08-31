@@ -13,6 +13,7 @@ data TexObject = Section String
                | NewPage
                | Text String
                | List [Either SimpleTexObject TexObject]
+               | Noop
                deriving Show
 
 data SimpleTexObject = Variable { name :: String , value :: String }
