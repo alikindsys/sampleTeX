@@ -7,6 +7,7 @@ import Mappings
 import Data.Map (Map)
 import System.PosixCompat.Files (fileExist)
 import qualified Data.Map as Map
+import Data.Maybe
 
 compile :: Document -> String 
 compile doc = unlines (map toTex reduced)
@@ -34,8 +35,9 @@ reduce doc (ImportStatement path) =
     else
         Text . serialize $ imports doc Map.! path
 
-reduce doc (ComplexString xs) = Text $ concatMap (toTex . replaceOrReduce doc) xs
-
+reduce doc (ComplexString xs) = Text $ concatMap (composedThing . replaceOrReduce doc) xs
+  where
+    composedThing = fromMaybe "" . toTex
 replace :: Document -> TexObject -> TexObject
 replace doc (Text s)
             | Map.member s vars = Text $ vars Map.! s
