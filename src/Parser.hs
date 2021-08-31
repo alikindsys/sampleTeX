@@ -56,9 +56,12 @@ parseList = do
 
 parseText :: Parser TexObject
 parseText = do
-    str <- parseBounded (\c -> c /= '\n' && c /= '{')
-    spaces
-    return $ Text str
+
+  str' <- manyTill anyChar (try $ lookAhead (string "\n" <|> string "{" <|> string  "]" <|> string ",, "))
+  -- str <- parseBounded (\c -> c /= '\n' && c /= '{' && c /= ']')
+  -- Let this be a reminder to anyone looking at this. Read the damn docs.
+  spaces
+  return $ Text str'
 
 parseTextTillEndOfLiteral :: Parser TexObject
 parseTextTillEndOfLiteral = do
