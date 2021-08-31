@@ -96,7 +96,7 @@ parseSection = do
 --- SimpleTexObject Parsers
 ---
 
-parseSimpleTexObject = try parseVariable <|> try parseImportStatement <|> try parseOutStatment <|> try parseComplexString <|> parseStringInterpolation
+parseSimpleTexObject = try parseVariable <|> try parseImportStatement <|> try parseOutStatment <|> try parseInlineListSeparator <|> try parseComplexString <|> parseStringInterpolation
 
 complexStringAllowedTexObjects = try parseTextTillEndOfLiteral <|> parseText
 complexStringAllowedSimpleTexObjects = parseStringInterpolation
