@@ -26,6 +26,8 @@ reduce doc (StringInterpolation (Identifier i)) =
 reduce doc (StringInterpolation (Chem c)) =
     Text $ "\\ce{"++c++"}"
 
+reduce doc InlineListSeparator = Noop
+
 reduce doc (ImportStatement path) =
     if Map.notMember path (imports doc) then
         error $ "Path not found on ImportTable : " ++ path ++ "\nHave you forgotten to call link?"
