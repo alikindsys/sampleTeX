@@ -119,6 +119,11 @@ parseImportStatement = do
     void spaces
     return $ ImportStatement path
 
+parseInlineListSeparator :: Parser SimpleTexObject
+parseInlineListSeparator = do
+  void $ string ",, "
+  pure InlineListSeparator
+
 
 parseComplexString :: Parser SimpleTexObject
 parseComplexString = do
