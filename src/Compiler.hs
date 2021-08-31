@@ -10,8 +10,9 @@ import qualified Data.Map as Map
 import Data.Maybe
 
 compile :: Document -> String 
-compile doc = unlines (map toTex reduced)
+compile doc = unlines (map composedThing reduced)
     where reduced = map (replaceOrReduce doc) (body doc)
+          composedThing = fromMaybe "" . toTex
 
 replaceOrReduce :: Document -> Either SimpleTexObject TexObject -> TexObject
 replaceOrReduce doc (Left x) = reduce doc x
