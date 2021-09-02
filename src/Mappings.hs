@@ -6,6 +6,7 @@ import Data.Maybe
 toTex :: TexObject -> Maybe String
 toTex NewPage = Just "\\newpage"
 toTex (Section name) = Just $ "\\section{"++ name ++"}"
+toTex (Chapter x) = Just $ "\\chapter{" ++ x ++ "}"
 toTex (Text text) = Just text
 toTex (List x) = Just $ "\\begin{enumerate}" ++ concatMap itemize x ++ "\\end{enumerate}"
 toTex Noop = Nothing

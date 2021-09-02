@@ -10,6 +10,7 @@ import Text.Parsec
 import Control.Monad
 
 data TexObject = Section String
+               | Chapter String
                | NewPage
                | Text String
                | List [Either SimpleTexObject TexObject]
@@ -44,7 +45,7 @@ parseSampleTex str = do
 --- TexObject Parsers
 ---
 
-parseTexObject = try parseSection <|> try parsePage <|> try parseInlineList <|> try parseList  <|> parseText
+parseTexObject = try parseSection <|> try parseChapter <|> try parsePage <|> try parseInlineList <|> try parseList  <|> parseText
 
 parseList :: Parser TexObject
 parseList = do
@@ -91,6 +92,14 @@ parseSection = do
     value <- try parseStringLiteral <|> parseTillSeparator
     void spaces
     return $ Section value
+
+parseChapter :: Parser TexObject
+parseChapter = do
+  void $ string "ch"
+  void spaces
+  x <- try parseStringLiteral <|> parseTillSeparator
+  void spaces
+  return $ Chapter x
 
 ---
 --- SimpleTexObject Parsers
