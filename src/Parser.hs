@@ -93,6 +93,14 @@ parseSection = do
     void spaces
     return $ Section value
 
+parseChapter :: Parser TexObject
+parseChapter = do
+  void $ string "ch"
+  void spaces
+  x <- try parseStringLiteral <|> parseTillSeparator
+  void spaces
+  return $ Chapter x
+
 ---
 --- SimpleTexObject Parsers
 ---
