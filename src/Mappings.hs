@@ -1,14 +1,18 @@
 module Mappings (toTex) where
 
 import Parser
+import Data.Maybe 
 
-toTex :: TexObject -> String
-toTex NewPage = "\\newpage"
-toTex (Section name) = "\\section{"++ name ++"}"
-toTex (Text text) = text
-toTex (List x) = "\\begin{enumerate}" ++ concatMap itemize x ++ "\\end{enumerate}"
+toTex :: TexObject -> Maybe String
+toTex NewPage = Just "\\newpage"
+toTex (Section name) = Just $ "\\section{"++ name ++"}"
+toTex (Text text) = Just text
+toTex (List x) = Just $ "\\begin{enumerate}" ++ concatMap itemize x ++ "\\end{enumerate}"
+toTex Noop = Nothing
 
 itemize :: Either SimpleTexObject TexObject -> String
 itemize (Left x) = error $ "Invalid Operation : Attempted Mapping a SimpleTexObject.\nObject : " ++ show x
-itemize (Right x) = "\\item " ++ toTex x
+itemize (Right x) = maybe "" ("\\item " ++) result
+  where
+    result = toTex x
 

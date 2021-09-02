@@ -13,6 +13,7 @@ data TexObject = Section String
                | NewPage
                | Text String
                | List [Either SimpleTexObject TexObject]
+               | Noop
                deriving Show
 
 data SimpleTexObject = Variable { name :: String , value :: String }
@@ -20,6 +21,7 @@ data SimpleTexObject = Variable { name :: String , value :: String }
                      | ComplexString [Either SimpleTexObject TexObject]
                      | ImportStatement String
                      | OutStatment [String]
+                     | InlineListSeparator
                      deriving Show
 
 data SimpleTexFunction = Chem String 
@@ -42,7 +44,7 @@ parseSampleTex str = do
 --- TexObject Parsers
 ---
 
-parseTexObject = try parseSection <|> try parsePage <|> try parseList <|> parseText
+parseTexObject = try parseSection <|> try parsePage <|> try parseInlineList <|> try parseList  <|> parseText
 
 parseList :: Parser TexObject
 parseList = do
@@ -52,11 +54,24 @@ parseList = do
     void spaces
     return $ List value 
 
+-- [a,, b,, c]
+-- List ["a,, b,, c"]
+-- I need to add a list separator token and thats it?
+parseInlineList :: Parser TexObject
+parseInlineList = do
+  void $ char '['
+  xs <- manyTill parseObject (string "]")
+  void spaces
+  pure $ List xs 
+
 parseText :: Parser TexObject
 parseText = do
-    str <- parseBounded (\c -> c /= '\n' && c /= '{')
-    spaces
-    return $ Text str
+
+  str' <- manyTill anyChar (try $ lookAhead (string "\n" <|> string "{" <|> string  "]" <|> string ",, "))
+  -- str <- parseBounded (\c -> c /= '\n' && c /= '{' && c /= ']')
+  -- Let this be a reminder to anyone looking at this. Read the damn docs.
+  spaces
+  return $ Text str'
 
 parseTextTillEndOfLiteral :: Parser TexObject
 parseTextTillEndOfLiteral = do
@@ -81,7 +96,7 @@ parseSection = do
 --- SimpleTexObject Parsers
 ---
 
-parseSimpleTexObject = try parseVariable <|> try parseImportStatement <|> try parseOutStatment <|> try parseComplexString <|> parseStringInterpolation
+parseSimpleTexObject = try parseVariable <|> try parseImportStatement <|> try parseOutStatment <|> try parseInlineListSeparator <|> try parseComplexString <|> parseStringInterpolation
 
 complexStringAllowedTexObjects = try parseTextTillEndOfLiteral <|> parseText
 complexStringAllowedSimpleTexObjects = parseStringInterpolation
@@ -113,6 +128,11 @@ parseImportStatement = do
     path <- parseStringLiteral
     void spaces
     return $ ImportStatement path
+
+parseInlineListSeparator :: Parser SimpleTexObject
+parseInlineListSeparator = do
+  void $ string ",, "
+  pure InlineListSeparator
 
 
 parseComplexString :: Parser SimpleTexObject

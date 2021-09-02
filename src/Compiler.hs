@@ -7,10 +7,12 @@ import Mappings
 import Data.Map (Map)
 import System.PosixCompat.Files (fileExist)
 import qualified Data.Map as Map
+import Data.Maybe
 
 compile :: Document -> String 
-compile doc = unlines (map toTex reduced)
+compile doc = unlines (map composedThing reduced)
     where reduced = map (replaceOrReduce doc) (body doc)
+          composedThing = fromMaybe "" . toTex
 
 replaceOrReduce :: Document -> Either SimpleTexObject TexObject -> TexObject
 replaceOrReduce doc (Left x) = reduce doc x
@@ -26,14 +28,17 @@ reduce doc (StringInterpolation (Identifier i)) =
 reduce doc (StringInterpolation (Chem c)) =
     Text $ "\\ce{"++c++"}"
 
+reduce doc InlineListSeparator = Noop
+
 reduce doc (ImportStatement path) =
     if Map.notMember path (imports doc) then
         error $ "Path not found on ImportTable : " ++ path ++ "\nHave you forgotten to call link?"
     else
         Text . serialize $ imports doc Map.! path
 
-reduce doc (ComplexString xs) = Text $ concatMap (toTex . replaceOrReduce doc) xs
-
+reduce doc (ComplexString xs) = Text $ concatMap (composedThing . replaceOrReduce doc) xs
+  where
+    composedThing = fromMaybe "" . toTex
 replace :: Document -> TexObject -> TexObject
 replace doc (Text s)
             | Map.member s vars = Text $ vars Map.! s
