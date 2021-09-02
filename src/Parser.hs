@@ -45,7 +45,7 @@ parseSampleTex str = do
 --- TexObject Parsers
 ---
 
-parseTexObject = try parseSection <|> try parsePage <|> try parseInlineList <|> try parseList  <|> parseText
+parseTexObject = try parseSection <|> try parseChapter <|> try parsePage <|> try parseInlineList <|> try parseList  <|> parseText
 
 parseList :: Parser TexObject
 parseList = do
