@@ -10,6 +10,7 @@ import Text.Parsec
 import Control.Monad
 
 data TexObject = Section String
+               | Chapter String
                | NewPage
                | Text String
                | List [Either SimpleTexObject TexObject]
