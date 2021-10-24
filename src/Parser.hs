@@ -3,15 +3,20 @@
 {-# LANGUAGE RecordWildCards #-}
 
 module Parser
-  ( parseEscapeSequence
+  ( parseEscapeSequence,
+    parseIdentifier,
   )
 where
 
-import Text.Megaparsec
+import Control.Monad
 import Data.Text
 import Data.Void
 import Text.Megaparsec.Char (char, alphaNumChar)
 import Control.Monad
+import Text.Megaparsec
+import Text.Megaparsec.Byte (alphaNumChar)
+import Text.Megaparsec.Char (alphaNumChar, char, letterChar)
+import qualified Text.Megaparsec.Char as C
 import qualified Text.Megaparsec.Char.Lexer as L
 
 -- | The core spec types
@@ -37,6 +42,12 @@ parseEscapeSequence = do
     void  $ single '\\'
     char <- L.charLiteral
     pure CharEscape{getChar=char}
+
+-- | Identifier
+parseIdentifier :: Parser Identifier
+parseIdentifier = do
+    ident <- (:) <$> letterChar <*> many alphaNumChar
+    pure Identifier{toStr=ident}
 
 -- | '$' - FString
 -- | StringLiteral
