@@ -11,11 +11,9 @@ where
 import Control.Monad
 import Data.Text
 import Data.Void
-import Text.Megaparsec.Char (char, alphaNumChar)
-import Control.Monad
+import Text.Megaparsec.Char
+    ( char, alphaNumChar, alphaNumChar, char, letterChar )
 import Text.Megaparsec
-import Text.Megaparsec.Byte (alphaNumChar)
-import Text.Megaparsec.Char (alphaNumChar, char, letterChar)
 import qualified Text.Megaparsec.Char as C
 import qualified Text.Megaparsec.Char.Lexer as L
 
