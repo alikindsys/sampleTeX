@@ -5,6 +5,7 @@
 module Parser
   ( parseEscapeSequence,
     parseIdentifier,
+    parseFString,
   )
 where
 
@@ -48,6 +49,12 @@ parseIdentifier = do
     pure Identifier{toStr=ident}
 
 -- | '$' - FString
+parseFString :: Parser FString
+parseFString = do
+    void $ single '$'
+    ident <- parseIdentifier
+    pure FString{identifier=ident}
+
 -- | StringLiteral
 -- | '\"' <inner> '\"'
 
