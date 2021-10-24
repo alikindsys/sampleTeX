@@ -15,13 +15,13 @@ import Control.Monad
 import qualified Text.Megaparsec.Char.Lexer as L
 
 -- | The core spec types
-newtype Identifier = Identifier {toStr :: Text}
+newtype Identifier = Identifier {toStr :: String}
     deriving (Show)
 newtype CharEscape = CharEscape {getChar :: Char}
     deriving (Show)
 newtype FString = FString {identifier :: Identifier}
     deriving (Show)
-newtype StringLiteral = StringLiteral {text :: Text}
+newtype StringLiteral = StringLiteral {text :: String}
     deriving (Show)
 data Variable = Variable {identifier :: Identifier, value :: StringLiteral}
     deriving (Show)
