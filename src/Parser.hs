@@ -3,7 +3,7 @@
 {-# LANGUAGE RecordWildCards #-}
 
 module Parser
-  (    
+  ( parseEscapeSequence
   )
 where
 
@@ -32,6 +32,12 @@ type Parser = Parsec Void Text
 -- | Parsers
 
 -- | '\' - Character Escaping
+parseEscapeSequence :: Parser CharEscape
+parseEscapeSequence = do
+    void  $ single '\\'
+    char <- L.charLiteral
+    pure CharEscape{getChar=char}
+
 -- | '$' - FString
 -- | StringLiteral
 -- | '\"' <inner> '\"'
