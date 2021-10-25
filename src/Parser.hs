@@ -7,14 +7,16 @@ module Parser
     parseIdentifier,
     parseFString,
     parseStringLiteral,
+    parseVariableDefinition,
   )
 where
 
 import Control.Monad
 import Data.Text
 import Data.Void
+import Data.String
 import Text.Megaparsec.Char
-    ( char, alphaNumChar, alphaNumChar, char, letterChar )
+    ( char, alphaNumChar, alphaNumChar, char, letterChar, string, space1 )
 import Text.Megaparsec
 import qualified Text.Megaparsec.Char as C
 import qualified Text.Megaparsec.Char.Lexer as L
@@ -63,8 +65,21 @@ parseStringLiteral = do
     x <- char '"' >> manyTill L.charLiteral (char '"')
     pure StringLiteral {text=x}
 
+parseKeyword :: String -> Parser Text
+parseKeyword keyword =  string (fromString keyword) <* notFollowedBy alphaNumChar
+
 -- | Keywords
 -- | `out` `var`
+parseVariableDefinition :: Parser Variable
+parseVariableDefinition = do
+    void $ parseKeyword "var"
+    void space1
+    ident <- parseIdentifier
+    void space1
+    void $ char '='
+    void space1
+    value <- parseStringLiteral
+    pure Variable {identifier=ident, value=value}
 
 -- | Pragmas
 -- | `include` `import` `class`
