@@ -40,6 +40,8 @@ data StringComponent = Literal String | VariableReplacement FString | EscapeSequ
     deriving (Show)
 newtype CompoundString = CompoundString {components :: [StringComponent]}
     deriving (Show)
+newtype VariableExport = VariableExport {identifiers :: [Identifier]}
+    deriving (Show)
 
 -- | The parser type.
 type Parser = Parsec Void Text
