@@ -67,6 +67,12 @@ parseStringLiteral = do
     x <- char '"' >> manyTill L.charLiteral (char '"')
     pure StringLiteral {text=x}
 
+reservedSymbols :: Parser ()
+reservedSymbols = try $ choice [
+        void parseEscapeSequence,
+        void parseFString
+    ]
+
 -- | Keywords
 -- | `out` `var`
 
