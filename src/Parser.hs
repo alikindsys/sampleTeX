@@ -31,6 +31,10 @@ newtype StringLiteral = StringLiteral {text :: String}
 data Variable = Variable {identifier :: Identifier, value :: StringLiteral}
     deriving (Show)
 
+-- | Abstractions
+data StringComponent = Literal String | VariableReplacement FString | EscapeSequence CharEscape
+    deriving (Show)
+
 -- | The parser type.
 type Parser = Parsec Void Text
 
