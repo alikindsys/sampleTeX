@@ -7,6 +7,7 @@ module Parser
     parseIdentifier,
     parseFString,
     parseStringLiteral,
+    parseStringComponent,
   )
 where
 
