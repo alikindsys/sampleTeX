@@ -73,6 +73,13 @@ reservedSymbols = try $ choice [
         void parseFString
     ]
 
+parseWord :: Parser String
+parseWord = someTill L.charLiteral $ choice [
+        reservedSymbols,
+        void $ char ' ',
+        eof
+    ]
+
 -- | Keywords
 -- | `out` `var`
 
