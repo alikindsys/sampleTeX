@@ -8,6 +8,8 @@ module Parser
     parseFString,
     parseStringLiteral,
     parseVariableDefinition,
+    parseStringComponent,
+    parseCompoundString,
   )
 where
 
@@ -16,7 +18,7 @@ import Data.Text
 import Data.Void
 import Data.String
 import Text.Megaparsec.Char
-    ( char, alphaNumChar, alphaNumChar, char, letterChar, string, space1 )
+    ( char, alphaNumChar, alphaNumChar, char, letterChar, string, space1, eol )
 import Text.Megaparsec
 import qualified Text.Megaparsec.Char as C
 import qualified Text.Megaparsec.Char.Lexer as L
@@ -35,6 +37,8 @@ data Variable = Variable {identifier :: Identifier, value :: StringLiteral}
 
 -- | Abstractions
 data StringComponent = Literal String | VariableReplacement FString | EscapeSequence CharEscape
+    deriving (Show)
+newtype CompoundString = CompoundString {components :: [StringComponent]}
     deriving (Show)
 
 -- | The parser type.
@@ -89,6 +93,12 @@ parseWord = someTill L.charLiteral $ choice [
         void $ char ' ',
         eof
     ]
+
+-- | Compound String
+parseCompoundString :: Parser CompoundString
+parseCompoundString = do
+    components <- someTill parseStringComponent (void eol <|> eof)
+    pure CompoundString{components=components}
 
 parseKeyword :: String -> Parser Text
 parseKeyword keyword =  string (fromString keyword) <* notFollowedBy alphaNumChar
