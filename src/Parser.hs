@@ -6,6 +6,7 @@ module Parser
   ( parseEscapeSequence,
     parseIdentifier,
     parseFString,
+    parseStringLiteral,
   )
 where
 
@@ -57,6 +58,10 @@ parseFString = do
 
 -- | StringLiteral
 -- | '\"' <inner> '\"'
+parseStringLiteral :: Parser StringLiteral
+parseStringLiteral = do
+    x <- char '"' >> manyTill L.charLiteral (char '"')
+    pure StringLiteral {text=x}
 
 -- | Keywords
 -- | `out` `var`
