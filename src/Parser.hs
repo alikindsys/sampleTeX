@@ -13,8 +13,9 @@ where
 import Control.Monad
 import Data.Text
 import Data.Void
+import Data.String
 import Text.Megaparsec.Char
-    ( char, alphaNumChar, alphaNumChar, char, letterChar )
+    ( char, alphaNumChar, alphaNumChar, char, letterChar, string )
 import Text.Megaparsec
 import qualified Text.Megaparsec.Char as C
 import qualified Text.Megaparsec.Char.Lexer as L
@@ -62,6 +63,9 @@ parseStringLiteral :: Parser StringLiteral
 parseStringLiteral = do
     x <- char '"' >> manyTill L.charLiteral (char '"')
     pure StringLiteral {text=x}
+
+parseKeyword :: String -> Parser Text
+parseKeyword keyword =  string (fromString keyword) <* notFollowedBy alphaNumChar
 
 -- | Keywords
 -- | `out` `var`
