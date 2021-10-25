@@ -33,6 +33,10 @@ newtype StringLiteral = StringLiteral {text :: String}
 data Variable = Variable {identifier :: Identifier, value :: StringLiteral}
     deriving (Show)
 
+-- | Abstractions
+data StringComponent = Literal String | VariableReplacement FString | EscapeSequence CharEscape
+    deriving (Show)
+
 -- | The parser type.
 type Parser = Parsec Void Text
 
@@ -64,6 +68,27 @@ parseStringLiteral :: Parser StringLiteral
 parseStringLiteral = do
     x <- char '"' >> manyTill L.charLiteral (char '"')
     pure StringLiteral {text=x}
+
+-- | String Components
+parseStringComponent :: Parser StringComponent
+parseStringComponent = choice
+    [ EscapeSequence <$> parseEscapeSequence,
+      VariableReplacement <$> parseFString,
+      Literal <$> parseWord
+    ]
+
+reservedSymbols :: Parser ()
+reservedSymbols = try $ choice [
+        void parseEscapeSequence,
+        void parseFString
+    ]
+
+parseWord :: Parser String
+parseWord = someTill L.charLiteral $ choice [
+        reservedSymbols,
+        void $ char ' ',
+        eof
+    ]
 
 parseKeyword :: String -> Parser Text
 parseKeyword keyword =  string (fromString keyword) <* notFollowedBy alphaNumChar
