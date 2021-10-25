@@ -67,6 +67,14 @@ parseStringLiteral = do
     x <- char '"' >> manyTill L.charLiteral (char '"')
     pure StringLiteral {text=x}
 
+-- | String Components
+parseStringComponent :: Parser StringComponent
+parseStringComponent = choice
+    [ EscapeSequence <$> parseEscapeSequence,
+      VariableReplacement <$> parseFString,
+      Literal <$> parseWord
+    ]
+
 reservedSymbols :: Parser ()
 reservedSymbols = try $ choice [
         void parseEscapeSequence,
