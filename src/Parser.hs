@@ -8,6 +8,7 @@ module Parser
     parseFString,
     parseStringLiteral,
     parseStringComponent,
+    parseCompoundString,
   )
 where
 
@@ -15,7 +16,7 @@ import Control.Monad
 import Data.Text
 import Data.Void
 import Text.Megaparsec.Char
-    ( char, alphaNumChar, alphaNumChar, char, letterChar )
+    ( char, alphaNumChar, alphaNumChar, char, letterChar, eol )
 import Text.Megaparsec
 import qualified Text.Megaparsec.Char as C
 import qualified Text.Megaparsec.Char.Lexer as L
@@ -90,6 +91,12 @@ parseWord = someTill L.charLiteral $ choice [
         void $ char ' ',
         eof
     ]
+
+-- | Compound String
+parseCompoundString :: Parser CompoundString
+parseCompoundString = do
+    components <- someTill parseStringComponent (void eol <|> eof)
+    pure CompoundString{components=components}
 
 -- | Keywords
 -- | `out` `var`
