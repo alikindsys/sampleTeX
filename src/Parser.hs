@@ -35,6 +35,8 @@ data Variable = Variable {identifier :: Identifier, value :: StringLiteral}
 -- | Abstractions
 data StringComponent = Literal String | VariableReplacement FString | EscapeSequence CharEscape
     deriving (Show)
+newtype CompoundString = CompoundString {components :: [StringComponent]}
+    deriving (Show)
 
 -- | The parser type.
 type Parser = Parsec Void Text
