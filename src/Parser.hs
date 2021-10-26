@@ -14,12 +14,14 @@ module Parser
     parseInclude,
     parseSetting,
     parseFunctionKind,
+    parseImport,
   )
 where
 
 import Control.Monad
 import Data.Text
 import Data.Void
+import Data.Maybe
 import Data.String
 import Text.Megaparsec.Char
     ( char, alphaNumChar, alphaNumChar, char, letterChar, string, space1, eol )
@@ -162,6 +164,15 @@ parseInclude = do
             pure Include {path= path, kind=LaTeX}
         else
             fail "Invalid File Type. Expected either `.tex` or `.sample`"
+
+-- | Import Pragma
+parseImport :: Parser Pragma
+parseImport = do
+    void $ parsePragma "import"
+    void space1 
+    ident <- parseIdentifier
+    inner <- optional $ space1 *> char '(' *> many parseFunctionKindWithComma <* char ')'
+    pure Import {package=ident, functions=fromMaybe [] inner} 
 
 parseFunctionKindWithComma :: Parser FunctionKind
 parseFunctionKindWithComma = optional space1 *> parseFunctionKind <* optional (char ',')
