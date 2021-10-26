@@ -131,3 +131,5 @@ parseVariableExport = do
 
 -- | Pragmas
 -- | `include` `import` `class`
+parsePragma :: String -> Parser Text
+parsePragma pragma  = char '#' *> parseKeyword pragma
