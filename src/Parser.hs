@@ -43,6 +43,8 @@ newtype CompoundString = CompoundString {components :: [StringComponent]}
     deriving (Show)
 newtype VariableExport = VariableExport {identifiers :: [Identifier]}
     deriving (Show)
+data PathKind = SampleTex | LaTeX
+    deriving (Show)
 
 -- | The parser type.
 type Parser = Parsec Void Text
