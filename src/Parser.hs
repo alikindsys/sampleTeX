@@ -11,6 +11,7 @@ module Parser
     parseStringComponent,
     parseCompoundString,
     parseVariableExport,
+    parseInclude,
   )
 where
 
@@ -142,3 +143,18 @@ parseVariableExport = do
 -- | `include` `import` `class`
 parsePragma :: String -> Parser Text
 parsePragma pragma  = char '#' *> parseKeyword pragma
+
+parseInclude :: Parser Pragma
+parseInclude = do 
+    void $ parsePragma "include"
+    void space1 
+    strLit <- parseStringLiteral
+    let path = text strLit
+    let packed = pack path
+    if ".sample" `isSuffixOf` packed then
+        pure Include {path= path, kind=SampleTex}
+    else
+        if ".tex" `isSuffixOf` packed then
+            pure Include {path= path, kind=LaTeX}
+        else
+            fail "Invalid File Type. Expected either `.tex` or `.sample`"
