@@ -10,6 +10,7 @@ module Parser
     parseVariableDefinition,
     parseStringComponent,
     parseCompoundString,
+    parseVariableExport,
   )
 where
 
@@ -120,6 +121,13 @@ parseVariableDefinition = do
 
 parseIdentifierWithComma :: Parser Identifier
 parseIdentifierWithComma = space1 *> parseIdentifier <* optional (char ',')
+
+-- | Variable Export
+parseVariableExport :: Parser VariableExport
+parseVariableExport = do
+    void $ parseKeyword "out"
+    void space1
+    VariableExport <$> someTill parseIdentifierWithComma (void eol <|> eof)
 
 -- | Pragmas
 -- | `include` `import` `class`
