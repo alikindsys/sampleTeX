@@ -10,6 +10,7 @@ module Parser
     parseVariableDefinition,
     parseStringComponent,
     parseCompoundString,
+    parseVariableExport,
   )
 where
 
@@ -39,6 +40,8 @@ data Variable = Variable {identifier :: Identifier, value :: StringLiteral}
 data StringComponent = Literal String | VariableReplacement FString | EscapeSequence CharEscape
     deriving (Show)
 newtype CompoundString = CompoundString {components :: [StringComponent]}
+    deriving (Show)
+newtype VariableExport = VariableExport {identifiers :: [Identifier]}
     deriving (Show)
 
 -- | The parser type.
@@ -115,6 +118,16 @@ parseVariableDefinition = do
     void space1
     value <- parseStringLiteral
     pure Variable {identifier=ident, value=value}
+
+parseIdentifierWithComma :: Parser Identifier
+parseIdentifierWithComma = space1 *> parseIdentifier <* optional (char ',')
+
+-- | Variable Export
+parseVariableExport :: Parser VariableExport
+parseVariableExport = do
+    void $ parseKeyword "out"
+    void space1
+    VariableExport <$> someTill parseIdentifierWithComma (void eol <|> eof)
 
 -- | Pragmas
 -- | `include` `import` `class`
