@@ -13,6 +13,7 @@ module Parser
     parseVariableExport,
     parseInclude,
     parseSetting,
+    parseFunctionKind,
   )
 where
 
@@ -161,6 +162,13 @@ parseInclude = do
             pure Include {path= path, kind=LaTeX}
         else
             fail "Invalid File Type. Expected either `.tex` or `.sample`"
+
+-- | Function Kind
+parseFunctionKind :: Parser FunctionKind 
+parseFunctionKind = choice [
+        try parseSetting,
+        Function <$> parseIdentifier
+    ] 
 
 parseSetting :: Parser FunctionKind
 parseSetting = do
