@@ -163,6 +163,9 @@ parseInclude = do
         else
             fail "Invalid File Type. Expected either `.tex` or `.sample`"
 
+parseFunctionKindWithComma :: Parser FunctionKind
+parseFunctionKindWithComma = optional space1 *> parseFunctionKind <* optional (char ',')
+
 -- | Function Kind
 parseFunctionKind :: Parser FunctionKind 
 parseFunctionKind = choice [
