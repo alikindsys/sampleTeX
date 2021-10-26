@@ -12,6 +12,7 @@ module Parser
     parseCompoundString,
     parseVariableExport,
     parseInclude,
+    parseSetting,
   )
 where
 
@@ -160,3 +161,12 @@ parseInclude = do
             pure Include {path= path, kind=LaTeX}
         else
             fail "Invalid File Type. Expected either `.tex` or `.sample`"
+
+parseSetting :: Parser FunctionKind
+parseSetting = do
+    ident <- parseIdentifier 
+    void $ optional space1
+    void $ char '='
+    void $ optional space1 
+    value <- many alphaNumChar
+    pure Setting{key=ident, value=value}
