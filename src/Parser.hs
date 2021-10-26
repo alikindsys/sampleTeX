@@ -118,5 +118,8 @@ parseVariableDefinition = do
     value <- parseStringLiteral
     pure Variable {identifier=ident, value=value}
 
+parseIdentifierWithComma :: Parser Identifier
+parseIdentifierWithComma = space1 *> parseIdentifier <* optional (char ',')
+
 -- | Pragmas
 -- | `include` `import` `class`
