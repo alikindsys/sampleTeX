@@ -43,6 +43,13 @@ newtype CompoundString = CompoundString {components :: [StringComponent]}
     deriving (Show)
 newtype VariableExport = VariableExport {identifiers :: [Identifier]}
     deriving (Show)
+data Pragma = Include {path :: String, kind :: PathKind} 
+            | Import {packages :: [String], functions :: [String]} 
+            | Begin {function :: String} 
+            | Class {packages :: [String], functions :: [String]}
+            | End 
+            | Init
+            deriving (Show)
 data PathKind = SampleTex | LaTeX
     deriving (Show)
 
