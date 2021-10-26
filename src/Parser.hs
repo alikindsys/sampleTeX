@@ -45,9 +45,9 @@ newtype CompoundString = CompoundString {components :: [StringComponent]}
 newtype VariableExport = VariableExport {identifiers :: [Identifier]}
     deriving (Show)
 data Pragma = Include {path :: String, kind :: PathKind} 
-            | Import {packages :: [String], functions :: [String]} 
+            | Import {package :: Identifier, functions :: [FunctionKind]} 
             | Begin {function :: String} 
-            | Class {packages :: [String], functions :: [String]}
+            | Class {package :: Identifier, functions :: [FunctionKind]}
             | End 
             | Init
             deriving (Show)
