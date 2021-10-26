@@ -53,6 +53,8 @@ data Pragma = Include {path :: String, kind :: PathKind}
             deriving (Show)
 data PathKind = SampleTex | LaTeX
     deriving (Show)
+data FunctionKind = Setting {key :: Identifier, value :: String} | Function {identifier :: Identifier}
+    deriving (Show)
 
 -- | The parser type.
 type Parser = Parsec Void Text
