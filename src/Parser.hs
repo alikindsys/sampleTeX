@@ -15,6 +15,7 @@ module Parser
     parseSetting,
     parseFunctionKind,
     parseImport,
+    parseBegin,
   )
 where
 
@@ -50,7 +51,7 @@ newtype VariableExport = VariableExport {identifiers :: [Identifier]}
     deriving (Show)
 data Pragma = Include {path :: String, kind :: PathKind} 
             | Import {package :: Identifier, functions :: [FunctionKind]} 
-            | Begin {function :: String} 
+            | Begin {function :: Identifier} 
             | Class {package :: Identifier, functions :: [FunctionKind]}
             | End 
             | Init
@@ -192,3 +193,7 @@ parseSetting = do
     void $ optional space1 
     value <- many alphaNumChar
     pure Setting{key=ident, value=value}
+
+-- | Begin Pragma
+parseBegin :: Parser Pragma
+parseBegin = Begin <$> (parsePragma "begin" *> space1 *> parseIdentifier)
