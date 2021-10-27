@@ -17,6 +17,7 @@ module Parser
     parseImport,
     parseBegin,
     parseClass,
+    parseEnd,
   )
 where
 
@@ -208,3 +209,7 @@ parseClass = do
     ident <- parseIdentifier
     inner <- optional $ space1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
     pure Class {package=ident, functions=fromMaybe [] inner} 
+
+-- | End Pragma
+parseEnd :: Parser Pragma
+parseEnd = End <$ parsePragma "end"
