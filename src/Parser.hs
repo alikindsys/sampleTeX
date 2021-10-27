@@ -12,12 +12,16 @@ module Parser
     parseCompoundString,
     parseVariableExport,
     parseInclude,
+    parseSetting,
+    parseFunctionKind,
+    parseImport,
   )
 where
 
 import Control.Monad
 import Data.Text
 import Data.Void
+import Data.Maybe
 import Data.String
 import Text.Megaparsec.Char
     ( char, alphaNumChar, alphaNumChar, char, letterChar, string, space1, eol )
@@ -45,13 +49,15 @@ newtype CompoundString = CompoundString {components :: [StringComponent]}
 newtype VariableExport = VariableExport {identifiers :: [Identifier]}
     deriving (Show)
 data Pragma = Include {path :: String, kind :: PathKind} 
-            | Import {packages :: [String], functions :: [String]} 
+            | Import {package :: Identifier, functions :: [FunctionKind]} 
             | Begin {function :: String} 
-            | Class {packages :: [String], functions :: [String]}
+            | Class {package :: Identifier, functions :: [FunctionKind]}
             | End 
             | Init
             deriving (Show)
 data PathKind = SampleTex | LaTeX
+    deriving (Show)
+data FunctionKind = Setting {key :: Identifier, value :: String} | Function {identifier :: Identifier}
     deriving (Show)
 
 -- | The parser type.
@@ -158,3 +164,31 @@ parseInclude = do
             pure Include {path= path, kind=LaTeX}
         else
             fail "Invalid File Type. Expected either `.tex` or `.sample`"
+
+-- | Import Pragma
+parseImport :: Parser Pragma
+parseImport = do
+    void $ parsePragma "import"
+    void space1 
+    ident <- parseIdentifier
+    inner <- optional $ space1 *> char '(' *> many parseFunctionKindWithComma <* char ')'
+    pure Import {package=ident, functions=fromMaybe [] inner} 
+
+parseFunctionKindWithComma :: Parser FunctionKind
+parseFunctionKindWithComma = optional space1 *> parseFunctionKind <* optional (char ',')
+
+-- | Function Kind
+parseFunctionKind :: Parser FunctionKind 
+parseFunctionKind = choice [
+        try parseSetting,
+        Function <$> parseIdentifier
+    ] 
+
+parseSetting :: Parser FunctionKind
+parseSetting = do
+    ident <- parseIdentifier 
+    void $ optional space1
+    void $ char '='
+    void $ optional space1 
+    value <- many alphaNumChar
+    pure Setting{key=ident, value=value}
