@@ -50,7 +50,7 @@ newtype VariableExport = VariableExport {identifiers :: [Identifier]}
     deriving (Show)
 data Pragma = Include {path :: String, kind :: PathKind} 
             | Import {package :: Identifier, functions :: [FunctionKind]} 
-            | Begin {function :: String} 
+            | Begin {function :: Identifier} 
             | Class {package :: Identifier, functions :: [FunctionKind]}
             | End 
             | Init
