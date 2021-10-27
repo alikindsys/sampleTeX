@@ -16,6 +16,7 @@ module Parser
     parseFunctionKind,
     parseImport,
     parseBegin,
+    parseClass,
   )
 where
 
@@ -198,3 +199,12 @@ parseSetting = do
 -- | Begin Pragma
 parseBegin :: Parser Pragma
 parseBegin = Begin <$> (parsePragma "begin" *> space1 *> parseIdentifier)
+
+-- | Class Pragma
+parseClass :: Parser Pragma
+parseClass = do
+    void $ parsePragma "class"
+    void space1 
+    ident <- parseIdentifier
+    inner <- optional $ space1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
+    pure Class {package=ident, functions=fromMaybe [] inner} 
