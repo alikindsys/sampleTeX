@@ -15,6 +15,7 @@ module Parser
     parseSetting,
     parseFunctionKind,
     parseImport,
+    parseBegin,
   )
 where
 
@@ -192,3 +193,7 @@ parseSetting = do
     void $ optional space1 
     value <- many alphaNumChar
     pure Setting{key=ident, value=value}
+
+-- | Begin Pragma
+parseBegin :: Parser Pragma
+parseBegin = Begin <$> (parsePragma "begin" *> space1 *> parseIdentifier)
