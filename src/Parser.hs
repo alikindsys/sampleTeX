@@ -58,7 +58,7 @@ data Pragma = Include {path :: String, kind :: PathKind}
             deriving (Show)
 data PathKind = SampleTex | LaTeX
     deriving (Show)
-data FunctionKind = Setting {key :: Identifier, value :: String} | Function {identifier :: Identifier}
+data FunctionKind = Setting {key :: Identifier, value :: String} | Function {identifier :: Identifier} | Value {value :: String}
     deriving (Show)
 
 -- | The parser type.
@@ -182,7 +182,8 @@ parseFunctionKindWithComma = optional space1 *> parseFunctionKind <* optional (c
 parseFunctionKind :: Parser FunctionKind 
 parseFunctionKind = choice [
         try parseSetting,
-        Function <$> parseIdentifier
+        Function <$> parseIdentifier,
+        Value <$> some alphaNumChar
     ] 
 
 parseSetting :: Parser FunctionKind
