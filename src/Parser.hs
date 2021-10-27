@@ -172,7 +172,7 @@ parseImport = do
     void $ parsePragma "import"
     void space1 
     ident <- parseIdentifier
-    inner <- optional $ space1 *> char '(' *> many parseFunctionKindWithComma <* char ')'
+    inner <- optional $ space1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
     pure Import {package=ident, functions=fromMaybe [] inner} 
 
 parseFunctionKindWithComma :: Parser FunctionKind
