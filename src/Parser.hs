@@ -16,6 +16,7 @@ module Parser
     parseFunctionKind,
     parseImport,
     parseBegin,
+    parseClass,
   )
 where
 
@@ -58,7 +59,7 @@ data Pragma = Include {path :: String, kind :: PathKind}
             deriving (Show)
 data PathKind = SampleTex | LaTeX
     deriving (Show)
-data FunctionKind = Setting {key :: Identifier, value :: String} | Function {identifier :: Identifier}
+data FunctionKind = Setting {key :: Identifier, value :: String} | Function {identifier :: Identifier} | Value {value :: String}
     deriving (Show)
 
 -- | The parser type.
@@ -182,7 +183,8 @@ parseFunctionKindWithComma = optional space1 *> parseFunctionKind <* optional (c
 parseFunctionKind :: Parser FunctionKind 
 parseFunctionKind = choice [
         try parseSetting,
-        Function <$> parseIdentifier
+        Function <$> parseIdentifier,
+        Value <$> some alphaNumChar
     ] 
 
 parseSetting :: Parser FunctionKind
@@ -197,3 +199,12 @@ parseSetting = do
 -- | Begin Pragma
 parseBegin :: Parser Pragma
 parseBegin = Begin <$> (parsePragma "begin" *> space1 *> parseIdentifier)
+
+-- | Class Pragma
+parseClass :: Parser Pragma
+parseClass = do
+    void $ parsePragma "class"
+    void space1 
+    ident <- parseIdentifier
+    inner <- optional $ space1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
+    pure Class {package=ident, functions=fromMaybe [] inner} 
