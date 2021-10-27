@@ -191,7 +191,7 @@ parseSetting = do
     void $ optional space1
     void $ char '='
     void $ optional space1 
-    value <- many alphaNumChar
+    value <- some alphaNumChar
     pure Setting{key=ident, value=value}
 
 -- | Begin Pragma
