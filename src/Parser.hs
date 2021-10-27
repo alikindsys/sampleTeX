@@ -11,14 +11,7 @@ module Parser
     parseStringComponent,
     parseCompoundString,
     parseVariableExport,
-    parseInclude,
-    parseSetting,
-    parseFunctionKind,
-    parseImport,
-    parseBegin,
-    parseClass,
-    parseEnd,
-    parseInit,
+    parseAnyPragma,
   )
 where
 
@@ -151,6 +144,16 @@ parseVariableExport = do
 
 -- | Pragmas
 -- | `include` `import` `class`
+parseAnyPragma :: Parser Pragma
+parseAnyPragma = choice [
+        try parseEnd,
+        try parseInit,
+        try parseImport,
+        try parseInclude,
+        try parseBegin,
+        parseClass
+    ]
+
 parsePragma :: String -> Parser Text
 parsePragma pragma  = char '#' *> parseKeyword pragma
 
