@@ -18,6 +18,7 @@ module Parser
     parseBegin,
     parseClass,
     parseEnd,
+    parseInit,
   )
 where
 
@@ -213,3 +214,7 @@ parseClass = do
 -- | End Pragma
 parseEnd :: Parser Pragma
 parseEnd = End <$ parsePragma "end"
+
+-- | Init Pragma
+parseInit :: Parser Pragma
+parseInit = Init <$ parsePragma "init"
