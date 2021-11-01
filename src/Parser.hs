@@ -21,7 +21,7 @@ import Data.Void
 import Data.Maybe
 import Data.String
 import Text.Megaparsec.Char
-    ( char, alphaNumChar, alphaNumChar, char, letterChar, string, space1, eol )
+    ( char, alphaNumChar, alphaNumChar, char, letterChar, string, hspace1, eol )
 import Text.Megaparsec
 import qualified Text.Megaparsec.Char as C
 import qualified Text.Megaparsec.Char.Lexer as L
@@ -124,22 +124,22 @@ parseKeyword keyword =  string (fromString keyword) <* notFollowedBy alphaNumCha
 parseVariableDefinition :: Parser Variable
 parseVariableDefinition = do
     void $ parseKeyword "var"
-    void space1
+    void hspace1
     ident <- parseIdentifier
-    void space1
+    void hspace1
     void $ char '='
-    void space1
+    void hspace1
     value <- parseStringLiteral
     pure Variable {identifier=ident, value=value}
 
 parseIdentifierWithComma :: Parser Identifier
-parseIdentifierWithComma = space1 *> parseIdentifier <* optional (char ',')
+parseIdentifierWithComma = hspace1 *> parseIdentifier <* optional (char ',')
 
 -- | Variable Export
 parseVariableExport :: Parser VariableExport
 parseVariableExport = do
     void $ parseKeyword "out"
-    void space1
+    void hspace1
     VariableExport <$> someTill parseIdentifierWithComma (void eol <|> eof)
 
 -- | Pragmas
@@ -160,7 +160,7 @@ parsePragma pragma  = char '#' *> parseKeyword pragma
 parseInclude :: Parser Pragma
 parseInclude = do 
     void $ parsePragma "include"
-    void space1 
+    void hspace1 
     strLit <- parseStringLiteral
     let path = text strLit
     let packed = pack path
@@ -176,13 +176,13 @@ parseInclude = do
 parseImport :: Parser Pragma
 parseImport = do
     void $ parsePragma "import"
-    void space1 
+    void hspace1 
     ident <- parseIdentifier
-    inner <- optional $ space1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
+    inner <- optional $ hspace1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
     pure Import {package=ident, functions=fromMaybe [] inner} 
 
 parseFunctionKindWithComma :: Parser FunctionKind
-parseFunctionKindWithComma = optional space1 *> parseFunctionKind <* optional (char ',')
+parseFunctionKindWithComma = optional hspace1 *> parseFunctionKind <* optional (char ',')
 
 -- | Function Kind
 parseFunctionKind :: Parser FunctionKind 
@@ -195,23 +195,23 @@ parseFunctionKind = choice [
 parseSetting :: Parser FunctionKind
 parseSetting = do
     ident <- parseIdentifier 
-    void $ optional space1
+    void $ optional hspace1
     void $ char '='
-    void $ optional space1 
+    void $ optional hspace1 
     value <- some alphaNumChar
     pure Setting{key=ident, value=value}
 
 -- | Begin Pragma
 parseBegin :: Parser Pragma
-parseBegin = Begin <$> (parsePragma "begin" *> space1 *> parseIdentifier)
+parseBegin = Begin <$> (parsePragma "begin" *> hspace1 *> parseIdentifier)
 
 -- | Class Pragma
 parseClass :: Parser Pragma
 parseClass = do
     void $ parsePragma "class"
-    void space1 
+    void hspace1 
     ident <- parseIdentifier
-    inner <- optional $ space1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
+    inner <- optional $ hspace1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
     pure Class {package=ident, functions=fromMaybe [] inner} 
 
 -- | End Pragma
