@@ -58,6 +58,8 @@ data FunctionKind = Setting {key :: Identifier, value :: String} | Function {ide
     deriving (Show)
 data ListItem = StringLit StringLiteral | CompString CompoundString
     deriving (Show)
+data List = List {items :: [ListItem], name :: Maybe CompoundString, ordered :: Bool}
+    deriving (Show)
 
 -- | The parser type.
 type Parser = Parsec Void Text
