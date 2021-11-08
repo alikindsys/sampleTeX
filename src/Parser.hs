@@ -146,11 +146,11 @@ parseVariableExport = do
 -- | `include` `import` `class`
 parseAnyPragma :: Parser Pragma
 parseAnyPragma = choice [
-        try parseEnd,
-        try parseInit,
-        try parseImport,
-        try parseInclude,
-        try parseBegin,
+        parseEnd,
+        parseInit,
+        parseImport,
+        parseInclude,
+        parseBegin,
         parseClass
     ]
 
