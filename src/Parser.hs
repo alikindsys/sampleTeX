@@ -106,7 +106,7 @@ reservedSymbols = choice [
 parseWord :: Parser String
 parseWord = someTill L.charLiteral $ choice [
         reservedSymbols,
-        void $ char ' ',
+        hspace1,
         eof
     ]
 
