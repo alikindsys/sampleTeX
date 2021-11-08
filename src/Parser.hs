@@ -224,3 +224,7 @@ parseEnd = End <$ parseKeyword "end"
 -- | Init Pragma
 parseInit :: Parser Pragma
 parseInit = Init <$ parseKeyword "init"
+
+-- | List Item 
+parseListItem :: Parser ListItem 
+parseListItem = (StringLit <$> parseStringLiteral) <|> (CompString <$> parseCompoundString)
