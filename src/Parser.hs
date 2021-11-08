@@ -104,7 +104,7 @@ reservedSymbols = choice [
     ]
 
 parseWord :: Parser String
-parseWord = someTill L.charLiteral $ choice [
+parseWord = someTill C.printChar $ choice [
         reservedSymbols,
         hspace1,
         eof
