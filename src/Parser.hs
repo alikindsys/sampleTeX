@@ -113,7 +113,7 @@ parseWord = someTill C.printChar $ choice [
 -- | Compound String
 parseCompoundString :: Parser CompoundString
 parseCompoundString = do
-    components <- someTill parseStringComponent (void eol <|> eof)
+    components <- string "$\"" >> someTill parseStringComponent (void (char '"'))
     pure CompoundString{components=components}
 
 parseKeyword :: String -> Parser Text
