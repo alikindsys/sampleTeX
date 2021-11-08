@@ -56,7 +56,7 @@ data PathKind = SampleTex | LaTeX
     deriving (Show)
 data FunctionKind = Setting {key :: Identifier, value :: String} | Function {identifier :: Identifier} | Value {value :: String}
     deriving (Show)
-data ListItem = StringLit StringLiteral | CompString CompoundString
+data ListItem = StringLit StringLiteral | CompString CompoundString | InnerList List
     deriving (Show)
 data List = List {items :: [ListItem], name :: Maybe CompoundString, ordered :: Bool}
     deriving (Show)
