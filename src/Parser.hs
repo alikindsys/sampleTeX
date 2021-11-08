@@ -145,7 +145,7 @@ parseVariableExport = do
 -- | Pragmas
 -- | `include` `import` `class`
 parseAnyPragma :: Parser Pragma
-parseAnyPragma = choice [
+parseAnyPragma = char '#' *> choice [
         parseEnd,
         parseInit,
         parseImport,
