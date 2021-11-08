@@ -98,7 +98,7 @@ parseStringComponent = choice
     ]
 
 reservedSymbols :: Parser ()
-reservedSymbols = try $ choice [
+reservedSymbols = choice [
         void parseEscapeSequence,
         void parseFString
     ]
