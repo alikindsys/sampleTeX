@@ -228,3 +228,8 @@ parseInit = Init <$ parseKeyword "init"
 -- | List Item 
 parseListItem :: Parser ListItem 
 parseListItem = (StringLit <$> parseStringLiteral) <|> (CompString <$> parseCompoundString)
+
+-- | List Datum
+-- Helper parser for getting an array (comma-separated) of ListItem
+parseListDatum :: Parser [ListItem]
+parseListDatum = sepBy1 parseListItem (char ',')
