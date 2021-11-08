@@ -187,6 +187,8 @@ parseFunctionKindWithComma = optional hspace1 *> parseFunctionKind <* optional (
 -- | Function Kind
 parseFunctionKind :: Parser FunctionKind 
 parseFunctionKind = choice [
+        -- Backtracking info :
+        -- Required due to the first instruction of `parseSetting` being `parseIdentifier`.
         try parseSetting,
         Function <$> parseIdentifier,
         Value <$> some alphaNumChar
