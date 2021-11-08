@@ -159,7 +159,7 @@ parsePragma pragma  = char '#' *> parseKeyword pragma
 
 parseInclude :: Parser Pragma
 parseInclude = do 
-    void $ parsePragma "include"
+    void $ parseKeyword "include"
     void hspace1 
     strLit <- parseStringLiteral
     let path = text strLit
@@ -175,7 +175,7 @@ parseInclude = do
 -- | Import Pragma
 parseImport :: Parser Pragma
 parseImport = do
-    void $ parsePragma "import"
+    void $ parseKeyword "import"
     void hspace1 
     ident <- parseIdentifier
     inner <- optional $ hspace1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
@@ -205,12 +205,12 @@ parseSetting = do
 
 -- | Begin Pragma
 parseBegin :: Parser Pragma
-parseBegin = Begin <$> (parsePragma "begin" *> hspace1 *> parseIdentifier)
+parseBegin = Begin <$> (parseKeyword "begin" *> hspace1 *> parseIdentifier)
 
 -- | Class Pragma
 parseClass :: Parser Pragma
 parseClass = do
-    void $ parsePragma "class"
+    void $ parseKeyword "class"
     void hspace1 
     ident <- parseIdentifier
     inner <- optional $ hspace1 *> char '(' *> some parseFunctionKindWithComma <* char ')'
@@ -218,8 +218,8 @@ parseClass = do
 
 -- | End Pragma
 parseEnd :: Parser Pragma
-parseEnd = End <$ parsePragma "end"
+parseEnd = End <$ parseKeyword "end"
 
 -- | Init Pragma
 parseInit :: Parser Pragma
-parseInit = Init <$ parsePragma "init"
+parseInit = Init <$ parseKeyword "init"
