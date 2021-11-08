@@ -154,9 +154,6 @@ parseAnyPragma = choice [
         parseClass
     ]
 
-parsePragma :: String -> Parser Text
-parsePragma pragma  = char '#' *> parseKeyword pragma
-
 parseInclude :: Parser Pragma
 parseInclude = do 
     void $ parseKeyword "include"
