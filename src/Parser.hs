@@ -233,3 +233,10 @@ parseListItem = (StringLit <$> parseStringLiteral) <|> (CompString <$> parseComp
 -- Helper parser for getting an array (comma-separated) of ListItem
 parseListDatum :: Parser [ListItem]
 parseListDatum = sepBy1 parseListItem (char ',')
+
+-- | Simple Oredered List 
+-- `[list datum]`
+parseSimpleOrderedList :: Parser List
+parseSimpleOrderedList = do 
+    xs <- between (char '[') (char ']') parseListDatum
+    pure List {items=xs, name=Nothing, ordered=True}
