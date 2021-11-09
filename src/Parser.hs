@@ -278,5 +278,9 @@ parseUnorderedNamedList = do
     list <- (string "u:" <|> string ":u") >> parseSimpleOrderedList
     pure $ list & name ?~ x & ordered .~ False
 
+-- | Parse a block item
+parseBlockItem :: Parser ListItem
+parseBlockItem = char '-' >> optional hspace1 >> parseListItem
+
 wrap :: StringLiteral -> CompoundString
 wrap a = CompoundString [Literal $ text a]
