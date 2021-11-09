@@ -1,6 +1,7 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Parser
   ( parseEscapeSequence,
@@ -16,6 +17,7 @@ module Parser
 where
 
 import Control.Monad
+import Control.Lens hiding (List)
 import Data.Text
 import Data.Void
 import Data.Maybe
