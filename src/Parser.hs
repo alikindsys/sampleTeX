@@ -244,3 +244,11 @@ parseSimpleOrderedList :: Parser List
 parseSimpleOrderedList = do 
     xs <- between (char '[') (char ']') parseListDatum
     pure List {items=xs, _name=Nothing, _ordered=True}
+
+-- | Unordered List
+-- `u[list datum]`
+parseUnorderedList :: Parser List
+parseUnorderedList = do
+    list <- char 'u' >> parseSimpleOrderedList
+    pure $ list & ordered .~ False 
+
