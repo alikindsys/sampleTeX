@@ -27,6 +27,7 @@ library:
   dependencies:
     - megaparsec
     - text
+    - lens
 
 
 executables:
