@@ -236,6 +236,8 @@ parseListItem = (StringLit <$> parseStringLiteral) <|> (CompString <$> parseComp
 parseListDatum :: Parser [ListItem]
 parseListDatum = sepBy1 parseListItem (char ',')
 
+makeLenses ''List
+
 -- | Simple Oredered List 
 -- `[list datum]`
 parseSimpleOrderedList :: Parser List
