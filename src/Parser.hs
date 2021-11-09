@@ -13,6 +13,7 @@ module Parser
     parseCompoundString,
     parseVariableExport,
     parseAnyPragma,
+    parseList
   )
 where
 
@@ -237,6 +238,13 @@ parseListDatum :: Parser [ListItem]
 parseListDatum = sepBy1 parseListItem (char ',')
 
 makeLenses ''List
+
+-- | Parses any list on the spec. 
+parseList :: Parser List 
+-- Backtracking info:
+-- Backtracking is required between `parseUnorderedNamedList` and `parseNamedList`
+-- due to their initial instructions being equal.
+parseList = try parseUnorderedNamedList <|> parseNamedList <|> parseUnorderedList <|> parseSimpleOrderedList
 
 -- | Simple Oredered List 
 -- `[list datum]`
