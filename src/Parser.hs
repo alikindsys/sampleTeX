@@ -252,3 +252,5 @@ parseUnorderedList = do
     list <- char 'u' >> parseSimpleOrderedList
     pure $ list & ordered .~ False 
 
+wrap :: StringLiteral -> CompoundString
+wrap a = CompoundString [Literal $ text a]
