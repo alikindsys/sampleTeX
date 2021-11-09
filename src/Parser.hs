@@ -60,7 +60,7 @@ data FunctionKind = Setting {key :: Identifier, value :: String} | Function {ide
     deriving (Show)
 data ListItem = StringLit StringLiteral | CompString CompoundString | InnerList List
     deriving (Show)
-data List = List {items :: [ListItem], name :: Maybe CompoundString, ordered :: Bool}
+data List = List {items :: [ListItem], _name :: Maybe CompoundString, _ordered :: Bool}
     deriving (Show)
 
 -- | The parser type.
@@ -241,4 +241,4 @@ parseListDatum = sepBy1 parseListItem (char ',')
 parseSimpleOrderedList :: Parser List
 parseSimpleOrderedList = do 
     xs <- between (char '[') (char ']') parseListDatum
-    pure List {items=xs, name=Nothing, ordered=True}
+    pure List {items=xs, _name=Nothing, _ordered=True}
