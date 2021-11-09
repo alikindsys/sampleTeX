@@ -228,6 +228,8 @@ parseEnd = End <$ parseKeyword "end"
 parseInit :: Parser Pragma
 parseInit = Init <$ parseKeyword "init"
 
+makeLenses ''List
+
 -- | List Item 
 parseListItem :: Parser ListItem 
 parseListItem = (StringLit <$> parseStringLiteral) <|> (CompString <$> parseCompoundString)
@@ -236,8 +238,6 @@ parseListItem = (StringLit <$> parseStringLiteral) <|> (CompString <$> parseComp
 -- Helper parser for getting an array (comma-separated) of ListItem
 parseListDatum :: Parser [ListItem]
 parseListDatum = sepBy1 parseListItem (char ',')
-
-makeLenses ''List
 
 -- | Parses any list on the spec. 
 parseList :: Parser List 
