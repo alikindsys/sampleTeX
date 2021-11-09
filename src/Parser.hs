@@ -260,5 +260,13 @@ parseNamedList = do
     list <- char ':' >> parseSimpleOrderedList
     pure $ list & name ?~ x
 
+-- | Unordered Named List
+-- `(String Literal | Compound String)(u: | :u)[]`
+parseUnorderedNamedList :: Parser List
+parseUnorderedNamedList = do
+    x <- (wrap <$> parseStringLiteral) <|> parseCompoundString
+    list <- (string "u:" <|> string ":u") >> parseSimpleOrderedList
+    pure $ list & name ?~ x & ordered .~ False
+
 wrap :: StringLiteral -> CompoundString
 wrap a = CompoundString [Literal $ text a]
