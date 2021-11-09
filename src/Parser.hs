@@ -1,6 +1,7 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Parser
   ( parseEscapeSequence,
@@ -12,10 +13,12 @@ module Parser
     parseCompoundString,
     parseVariableExport,
     parseAnyPragma,
+    parseList
   )
 where
 
 import Control.Monad
+import Control.Lens hiding (List)
 import Data.Text
 import Data.Void
 import Data.Maybe
@@ -55,6 +58,10 @@ data Pragma = Include {path :: String, kind :: PathKind}
 data PathKind = SampleTex | LaTeX
     deriving (Show)
 data FunctionKind = Setting {key :: Identifier, value :: String} | Function {identifier :: Identifier} | Value {value :: String}
+    deriving (Show)
+data ListItem = StringLit StringLiteral | CompString CompoundString | InnerList List
+    deriving (Show)
+data List = List {items :: [ListItem], _name :: Maybe CompoundString, _ordered :: Bool}
     deriving (Show)
 
 -- | The parser type.
@@ -220,3 +227,56 @@ parseEnd = End <$ parseKeyword "end"
 -- | Init Pragma
 parseInit :: Parser Pragma
 parseInit = Init <$ parseKeyword "init"
+
+makeLenses ''List
+
+-- | List Item 
+parseListItem :: Parser ListItem 
+-- Backtracking Info:
+-- `parseList` contains parsers that use `parseStringLiteral` and `parseCompoundString`
+parseListItem = try (InnerList <$> parseList) <|> (StringLit <$> parseStringLiteral) <|> (CompString <$> parseCompoundString)
+
+-- | List Datum
+-- Helper parser for getting an array (comma-separated) of ListItem
+parseListDatum :: Parser [ListItem]
+parseListDatum = sepBy1 parseListItem (char ',')
+
+-- | Parses any list on the spec. 
+parseList :: Parser List 
+-- Backtracking info:
+-- Backtracking is required between `parseUnorderedNamedList` and `parseNamedList`
+-- due to their initial instructions being equal.
+parseList = try parseUnorderedNamedList <|> parseNamedList <|> parseUnorderedList <|> parseSimpleOrderedList
+
+-- | Simple Oredered List 
+-- `[list datum]`
+parseSimpleOrderedList :: Parser List
+parseSimpleOrderedList = do 
+    xs <- between (char '[') (char ']') parseListDatum
+    pure List {items=xs, _name=Nothing, _ordered=True}
+
+-- | Unordered List
+-- `u[list datum]`
+parseUnorderedList :: Parser List
+parseUnorderedList = do
+    list <- char 'u' >> parseSimpleOrderedList
+    pure $ list & ordered .~ False 
+
+-- | Named List
+-- `(String Literal | Compound String):[]`
+parseNamedList :: Parser List
+parseNamedList = do
+    x <- (wrap <$> parseStringLiteral) <|> parseCompoundString
+    list <- char ':' >> parseSimpleOrderedList
+    pure $ list & name ?~ x
+
+-- | Unordered Named List
+-- `(String Literal | Compound String)(u: | :u)[]`
+parseUnorderedNamedList :: Parser List
+parseUnorderedNamedList = do
+    x <- (wrap <$> parseStringLiteral) <|> parseCompoundString
+    list <- (string "u:" <|> string ":u") >> parseSimpleOrderedList
+    pure $ list & name ?~ x & ordered .~ False
+
+wrap :: StringLiteral -> CompoundString
+wrap a = CompoundString [Literal $ text a]
