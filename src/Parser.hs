@@ -232,7 +232,9 @@ makeLenses ''List
 
 -- | List Item 
 parseListItem :: Parser ListItem 
-parseListItem = (StringLit <$> parseStringLiteral) <|> (CompString <$> parseCompoundString)
+-- Backtracking Info:
+-- `parseList` contains parsers that use `parseStringLiteral` and `parseCompoundString`
+parseListItem = try (InnerList <$> parseList) <|> (StringLit <$> parseStringLiteral) <|> (CompString <$> parseCompoundString)
 
 -- | List Datum
 -- Helper parser for getting an array (comma-separated) of ListItem
