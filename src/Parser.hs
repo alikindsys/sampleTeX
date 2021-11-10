@@ -281,7 +281,8 @@ parseUnorderedNamedList = do
 
 -- | Parse a block item
 parseBlockItem :: Parser ListItem
-parseBlockItem = char '-' >> optional hspace1 >> parseListItem
+parseBlockItem = (InnerList <$> (optional hspace1 >> parseBlock)) <|> (char '-' >> optional hspace1 >> parseListItem)
+
 -- | Block Datum
 parseBlockDatum :: Parser [ListItem]
 parseBlockDatum =  optional hspace1 >> sepBy1 parseBlockItem (char '\n')
