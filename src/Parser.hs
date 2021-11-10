@@ -13,7 +13,8 @@ module Parser
     parseCompoundString,
     parseVariableExport,
     parseAnyPragma,
-    parseList
+    parseList,
+    parseBlock,
   )
 where
 
@@ -276,6 +277,56 @@ parseUnorderedNamedList :: Parser List
 parseUnorderedNamedList = do
     x <- (wrap <$> parseStringLiteral) <|> parseCompoundString
     list <- (string "u:" <|> string ":u") >> parseSimpleOrderedList
+    pure $ list & name ?~ x & ordered .~ False
+
+-- | Parse a block item
+parseBlockItem :: Parser ListItem
+parseBlockItem = (InnerList <$> (optional hspace1 >> parseBlock)) <|> (char '-' >> optional hspace1 >> parseListItem)
+
+-- | Block Datum
+parseBlockDatum :: Parser [ListItem]
+parseBlockDatum =  optional hspace1 >> sepBy1 parseBlockItem (char '\n')
+
+-- | Parses any block
+parseBlock :: Parser List 
+-- Backtracking Info:
+-- Backtracking is required between `parseUnorderedNamedBlock` and `parseNamedBlock`
+-- due to their initial instructions being equal.
+parseBlock = try parseUnorderedNamedBlock <|> parseNamedBlock <|> parseUnorderedBlock <|> parseSimpleOrderedBlock
+
+-- | Parses a simple block
+-- {BlockDatum}
+parseSimpleOrderedBlock :: Parser List
+parseSimpleOrderedBlock = do
+    xs <- between open close parseBlockDatum
+    pure $ List {items=xs, _name=Nothing, _ordered=True}
+    where
+        -- If this manual handling of whitespace gives a problem i'll look into a better solution
+        -- for now it works, and as such. I don't care.
+        open = char '{' >> optional hspace1 >> char '\n' :: Parser Char
+        close = char ';' >> optional hspace1 >> char '\n' >> optional hspace1 >> char '}'  :: Parser Char
+
+-- | Unordered Block
+-- `u{}`
+parseUnorderedBlock :: Parser List
+parseUnorderedBlock = do
+    list <- char 'u' >> parseSimpleOrderedBlock
+    pure $ list & ordered .~ False 
+
+-- | Named Block
+-- `(String Literal | Compound String):{}`
+parseNamedBlock :: Parser List
+parseNamedBlock = do
+    x <- (wrap <$> parseStringLiteral) <|> parseCompoundString
+    list <- char ':' >> parseSimpleOrderedBlock
+    pure $ list & name ?~ x
+
+-- | Unordered Named Block
+-- `(String Literal | Compound String)(u: | :u){}`
+parseUnorderedNamedBlock :: Parser List
+parseUnorderedNamedBlock = do
+    x <- (wrap <$> parseStringLiteral) <|> parseCompoundString
+    list <- (string "u:" <|> string ":u") >> parseSimpleOrderedBlock
     pure $ list & name ?~ x & ordered .~ False
 
 wrap :: StringLiteral -> CompoundString
