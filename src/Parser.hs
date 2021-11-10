@@ -285,5 +285,17 @@ parseBlockItem = char '-' >> optional hspace1 >> parseListItem
 parseBlockDatum :: Parser [ListItem]
 parseBlockDatum =  optional hspace1 >> sepBy1 parseBlockItem (char '\n')
 
+-- | Parses a simple block
+-- {BlockDatum}
+parseSimpleOrderedBlock :: Parser List
+parseSimpleOrderedBlock = do
+    xs <- between open close parseBlockDatum
+    pure $ List {items=xs, _name=Nothing, _ordered=True}
+    where
+        -- If this manual handling of whitespace gives a problem i'll look into a better solution
+        -- for now it works, and as such. I don't care.
+        open = char '{' >> optional hspace1 >> char '\n' :: Parser Char
+        close = char ';' >> optional hspace1 >> char '\n' >> optional hspace1 >> char '}'  :: Parser Char
+
 wrap :: StringLiteral -> CompoundString
 wrap a = CompoundString [Literal $ text a]
