@@ -4,19 +4,22 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module Parser
-  ( parseEscapeSequence,
-    parseIdentifier,
-    parseFString,
-    parseStringLiteral,
-    parseVariableDefinition,
-    parseStringComponent,
-    parseCompoundString,
-    parseVariableExport,
-    parseAnyPragma,
-    parseList,
-    parseBlock,
+  ( CharEscape(..),
+    Identifier(..),
+    FString(..),
+    StringLiteral(..),
+    Variable(..),
+    StringComponent(..),
+    CompoundString(..),
+    VariableExport(..),
+    Pragma(..),
+    List(..),
+    ListItem(..),
     Object(..),
     parseObject,
+    -- Kinds
+    PathKind(..),
+    FunctionKind(..),
   )
 where
 
