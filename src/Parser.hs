@@ -15,6 +15,7 @@ module Parser
     parseAnyPragma,
     parseList,
     parseBlock,
+    Object(..),
   )
 where
 
@@ -64,6 +65,15 @@ data ListItem = StringLit StringLiteral | CompString CompoundString | InnerList 
     deriving (Show)
 data List = List {items :: [ListItem], _name :: Maybe CompoundString, _ordered :: Bool}
     deriving (Show)
+
+-- | A parseable top-level object.
+data Object = Variable' Variable 
+               | VariableExport' VariableExport 
+               | Pragma' Pragma 
+               | StringLiteral' StringLiteral 
+               | CompoundString' CompoundString  
+               | List' List 
+               deriving (Show)
 
 -- | The parser type.
 type Parser = Parsec Void Text
