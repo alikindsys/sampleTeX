@@ -33,9 +33,11 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers
     , lens
     , megaparsec
     , text
+    , transformers
   default-language: Haskell2010
 
 executable sampletex-exe
