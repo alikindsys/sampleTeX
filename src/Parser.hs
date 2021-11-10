@@ -297,5 +297,12 @@ parseSimpleOrderedBlock = do
         open = char '{' >> optional hspace1 >> char '\n' :: Parser Char
         close = char ';' >> optional hspace1 >> char '\n' >> optional hspace1 >> char '}'  :: Parser Char
 
+-- | Unordered Block
+-- `u{}`
+parseUnorderedBlock :: Parser List
+parseUnorderedBlock = do
+    list <- char 'u' >> parseSimpleOrderedBlock
+    pure $ list & ordered .~ False 
+
 wrap :: StringLiteral -> CompoundString
 wrap a = CompoundString [Literal $ text a]
