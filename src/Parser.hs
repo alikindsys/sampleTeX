@@ -140,15 +140,15 @@ parseVariableDefinition = do
     value <- parseStringLiteral
     pure Variable {identifier=ident, value=value}
 
-parseIdentifierWithComma :: Parser Identifier
-parseIdentifierWithComma = hspace1 *> parseIdentifier <* optional (char ',')
+parseIdentifiers :: Parser [Identifier]
+parseIdentifiers = sepBy1 parseIdentifier (char ',') 
 
 -- | Variable Export
 parseVariableExport :: Parser VariableExport
 parseVariableExport = do
     void $ parseKeyword "out"
     void hspace1
-    VariableExport <$> someTill parseIdentifierWithComma (void eol <|> eof)
+    VariableExport <$> parseIdentifiers
 
 -- | Pragmas
 -- | `include` `import` `class`
