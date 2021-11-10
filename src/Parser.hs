@@ -281,6 +281,9 @@ parseUnorderedNamedList = do
 -- | Parse a block item
 parseBlockItem :: Parser ListItem
 parseBlockItem = char '-' >> optional hspace1 >> parseListItem
+-- | Block Datum
+parseBlockDatum :: Parser [ListItem]
+parseBlockDatum =  optional hspace1 >> sepBy1 parseBlockItem (char '\n')
 
 wrap :: StringLiteral -> CompoundString
 wrap a = CompoundString [Literal $ text a]
