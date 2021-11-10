@@ -13,7 +13,8 @@ module Parser
     parseCompoundString,
     parseVariableExport,
     parseAnyPragma,
-    parseList
+    parseList,
+    parseBlock,
   )
 where
 
@@ -284,6 +285,13 @@ parseBlockItem = char '-' >> optional hspace1 >> parseListItem
 -- | Block Datum
 parseBlockDatum :: Parser [ListItem]
 parseBlockDatum =  optional hspace1 >> sepBy1 parseBlockItem (char '\n')
+
+-- | Parses any block
+parseBlock :: Parser List 
+-- Backtracking Info:
+-- Backtracking is required between `parseUnorderedNamedBlock` and `parseNamedBlock`
+-- due to their initial instructions being equal.
+parseBlock = try parseUnorderedNamedBlock <|> parseNamedBlock <|> parseUnorderedBlock <|> parseSimpleOrderedBlock
 
 -- | Parses a simple block
 -- {BlockDatum}
