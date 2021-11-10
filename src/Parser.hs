@@ -304,5 +304,13 @@ parseUnorderedBlock = do
     list <- char 'u' >> parseSimpleOrderedBlock
     pure $ list & ordered .~ False 
 
+-- | Named Block
+-- `(String Literal | Compound String):{}`
+parseNamedBlock :: Parser List
+parseNamedBlock = do
+    x <- (wrap <$> parseStringLiteral) <|> parseCompoundString
+    list <- char ':' >> parseSimpleOrderedBlock
+    pure $ list & name ?~ x
+
 wrap :: StringLiteral -> CompoundString
 wrap a = CompoundString [Literal $ text a]
