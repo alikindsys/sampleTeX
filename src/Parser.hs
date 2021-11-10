@@ -16,6 +16,7 @@ module Parser
     parseList,
     parseBlock,
     Object(..),
+    parseObject,
   )
 where
 
@@ -341,3 +342,15 @@ parseUnorderedNamedBlock = do
 
 wrap :: StringLiteral -> CompoundString
 wrap a = CompoundString [Literal $ text a]
+
+-- | Parse Any SampleTex Object
+parseObject :: Parser Object
+parseObject = choice 
+    [ Variable' <$> parseVariableDefinition,
+      VariableExport' <$> parseVariableExport,
+      Pragma' <$> parseAnyPragma,
+      StringLiteral' <$> parseStringLiteral,
+      CompoundString' <$> parseCompoundString,
+      List' <$> parseList,
+      List' <$> parseBlock
+    ]
