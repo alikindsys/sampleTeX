@@ -17,6 +17,7 @@ module Parser
     ListItem(..),
     Object(..),
     parseObject,
+    parseDocument,
     -- Kinds
     PathKind(..),
     FunctionKind(..),
@@ -360,3 +361,10 @@ parseObject = choice
       List' <$> parseList,
       List' <$> parseBlock
     ]
+
+-- | Parses any SampleTex document
+parseDocument :: Parser [Object]
+parseDocument = some (parseObject <* choice [
+    eof,
+    void $ some eol
+    ])
