@@ -42,3 +42,5 @@ makeLenses ''DocumentState
 type CompileT e s m = StateT s (ExceptT e m)
 
 type Compile e s = CompileT e s Identity
+
+type CompileIO e s = CompileT e s IO
