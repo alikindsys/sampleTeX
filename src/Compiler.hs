@@ -10,6 +10,8 @@ where
 import qualified Data.Map as M
 import Data.Map (Map)
 
+import Control.Lens.TH (makeLenses)
+
 import Parser (PathKind, Identifier (..), StringLiteral (..))
 
 data CompilationState = CompilationState
@@ -27,3 +29,5 @@ data DocumentState = DocumentState
     _compilation :: CompilationState
   }
   deriving (Show)
+
+makeLenses ''CompilationState
