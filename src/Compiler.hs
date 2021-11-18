@@ -4,6 +4,7 @@
 module Compiler
   ( CompilationState (..),
     DocumentState (..),
+    runCompileT,
   )
 where
 
@@ -14,8 +15,8 @@ import Data.Functor.Identity (Identity)
 
 import Control.Lens.TH (makeLenses)
 
-import Control.Monad.Trans.State.Lazy (StateT)
-import Control.Monad.Trans.Except (ExceptT)
+import Control.Monad.Trans.State.Lazy (StateT , runStateT)
+import Control.Monad.Trans.Except (ExceptT, runExceptT)
 
 import Parser (PathKind, Identifier (..), StringLiteral (..))
 
@@ -44,3 +45,6 @@ type CompileT e s m = StateT s (ExceptT e m)
 type Compile e s = CompileT e s Identity
 
 type CompileIO e s = CompileT e s IO
+
+runCompileT :: (Monad m) => CompileT e s m a -> s -> m (Either e (a, s))
+runCompileT m = runExceptT . runStateT m 
