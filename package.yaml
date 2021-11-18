@@ -30,6 +30,8 @@ library:
     - lens
     - transformers
     - containers
+    - filepath
+    - directory
 
 
 executables:

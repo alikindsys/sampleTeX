@@ -35,6 +35,8 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
+    , directory
+    , filepath
     , lens
     , megaparsec
     , text
