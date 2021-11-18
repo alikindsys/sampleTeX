@@ -24,7 +24,7 @@ import Control.Monad.Trans.Class (MonadTrans(lift))
 import Control.Monad.Trans.State.Lazy (StateT , runStateT, get, put)
 import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 
-import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..), Variable (..), VariableExport (..), Pragma (..), StringComponent(..))
+import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..), Variable (..), VariableExport (..), Pragma (..), StringComponent(..), CharEscape (..))
 
 data CompilationState = CompilationState
   { _file :: String,
@@ -125,4 +125,4 @@ texify (Pragma' End) = do
       pure $ "\\end{" <> head stk <> "}\n"
 
 texifyStringComponent ::  StringComponent -> Compile String DocumentState String
-texifyStringComponent = undefined
+texifyStringComponent (EscapeSequence c) = pure [Parser.getChar c]
