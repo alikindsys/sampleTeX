@@ -12,6 +12,9 @@ import Data.Map (Map)
 
 import Control.Lens.TH (makeLenses)
 
+import Control.Monad.Trans.State.Lazy (StateT)
+import Control.Monad.Trans.Except (ExceptT)
+
 import Parser (PathKind, Identifier (..), StringLiteral (..))
 
 data CompilationState = CompilationState
@@ -32,3 +35,6 @@ data DocumentState = DocumentState
 
 makeLenses ''CompilationState
 makeLenses ''DocumentState
+
+-- | Custom StateT with support for error-handling
+type CompileT e s m = StateT s (ExceptT e m)
