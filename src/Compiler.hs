@@ -22,7 +22,7 @@ import Control.Monad.Trans.Class (MonadTrans(lift))
 import Control.Monad.Trans.State.Lazy (StateT , runStateT, get, put)
 import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 
-import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..), Variable (..), VariableExport (..))
+import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..), Variable (..), VariableExport (..), Pragma (..))
 
 data CompilationState = CompilationState
   { _file :: String,
@@ -85,3 +85,15 @@ texify (VariableExport' (VariableExport xs)) = do
     tex (ident, value) =
       "\\newcommand{\\" <> toStr ident <> "}{" <> text value <> "}\n"
     getVar _map key = _map M.! key
+
+-- | Pragmas
+
+texify (Pragma' Init) = do
+  state <- get
+  if _initialized state
+    then
+      lift . throwE $
+        "Attempted initializing an already initialized document."
+    else do
+      put $ state & initialized .~ True & stack .~ "document" : _stack state
+      pure "\\begin{document}\n"
