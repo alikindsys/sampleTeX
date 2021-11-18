@@ -125,6 +125,11 @@ texify (Pragma' End) = do
       put $ state & stack .~ tail stk
       pure $ "\\end{" <> head stk <> "}\n"
 
+texifyFunctionKind :: FunctionKind -> String
+texifyFunctionKind (Setting k v) = toStr k <> "=" <> v
+texifyFunctionKind (Function i) = toStr i
+texifyFunctionKind (Value v) = v
+
 texifyStringComponent ::  StringComponent -> Compile String DocumentState String
 texifyStringComponent (EscapeSequence c) = pure [Parser.getChar c]
 texifyStringComponent (Literal s) = pure s
