@@ -169,6 +169,38 @@ texifyStringComponent (VariableReplacement (FString id)) = do
 
 texifyList :: List -> Compile String DocumentState String
 texifyList (List [] _ _) = lift $ throwE "Tried compiling an empty list."
+texifyList (List xs Nothing False) = do
+  items <- traverse texifyListItem xs
+  let str = concatMap (<> "\n") items
+  pure $ "\\begin{itemize}\n" <> str <> "\\end{itemize}"
+texifyList (List xs Nothing True) = do
+  items <- traverse texifyListItem xs
+  let str = concatMap (<> "\n") items
+  pure $ "\\begin{enumerate}\n" <> str <> "\\end{enumerate}"
+texifyList (List xs (Just n) False) = do
+  items <- traverse texifyListItem xs
+  name <- texify $ CompoundString' n
+  let str = concatMap (<> "\n") items
+  pure $
+    "\\begin{itemize}\n"
+      <> "\\item[]{"
+      <> name
+      <> ":}\n"
+      <> str
+      <> "\\end{itemize}"
+texifyList (List xs (Just n) True) = do
+  items <- traverse texifyListItem xs
+  name <- texify $ CompoundString' n
+  let str = concatMap (<> "\n") items
+  pure $
+    "\\begin{enumerate}\n"
+      <> "\\item[]{"
+      <> name
+      <> ":}\n"
+      <> str
+      <> "\\end{enumerate}"
+
+
 
 texifyListItem :: ListItem -> Compile String DocumentState String
 texifyListItem (StringLit (StringLiteral l)) = pure $ "\\item{" <> l <> "}\n"
