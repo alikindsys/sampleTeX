@@ -38,7 +38,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 -- | The core spec types
 newtype Identifier = Identifier {toStr :: String}
-    deriving (Show)
+    deriving (Show, Ord, Eq)
 newtype CharEscape = CharEscape {getChar :: Char}
     deriving (Show)
 newtype FString = FString {identifier :: Identifier}
