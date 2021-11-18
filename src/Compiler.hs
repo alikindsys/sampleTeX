@@ -10,6 +10,8 @@ where
 import qualified Data.Map as M
 import Data.Map (Map)
 
+import Data.Functor.Identity (Identity)
+
 import Control.Lens.TH (makeLenses)
 
 import Control.Monad.Trans.State.Lazy (StateT)
@@ -38,3 +40,5 @@ makeLenses ''DocumentState
 
 -- | Custom StateT with support for error-handling
 type CompileT e s m = StateT s (ExceptT e m)
+
+type Compile e s = CompileT e s Identity
