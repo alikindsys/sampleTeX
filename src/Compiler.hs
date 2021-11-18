@@ -13,6 +13,8 @@ where
 import qualified Data.Map as M
 import Data.Map (Map)
 
+import qualified Data.Text as T
+
 import Data.Functor.Identity (Identity (runIdentity))
 
 import Control.Lens.TH (makeLenses)
@@ -97,3 +99,16 @@ texify (Pragma' Init) = do
     else do
       put $ state & initialized .~ True & stack .~ "document" : _stack state
       pure "\\begin{document}\n"
+
+texify (Pragma' (Begin k)) = do
+  state <- get
+  let func = toStr k
+  let stk = _stack state
+  let lowerCased = T.toLower (T.pack func)
+  if lowerCased == "document" && _initialized state
+    then lift . throwE $ "Duplicate Document Initialization."
+    else
+      if lowerCased == "document"
+        then put $ state & stack .~ (toStr k : stk) & initialized .~ True
+        else put $ state & stack .~ (toStr k : stk)
+  pure $ "\\begin{" <> toStr k <> "}\n"
