@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      Compiler
       Lib
       Parser
   other-modules:
@@ -33,9 +34,13 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers
+    , directory
+    , filepath
     , lens
     , megaparsec
     , text
+    , transformers
   default-language: Haskell2010
 
 executable sampletex-exe

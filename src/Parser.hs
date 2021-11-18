@@ -4,17 +4,23 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module Parser
-  ( parseEscapeSequence,
-    parseIdentifier,
-    parseFString,
-    parseStringLiteral,
-    parseVariableDefinition,
-    parseStringComponent,
-    parseCompoundString,
-    parseVariableExport,
-    parseAnyPragma,
-    parseList,
-    parseBlock,
+  ( CharEscape(..),
+    Identifier(..),
+    FString(..),
+    StringLiteral(..),
+    Variable(..),
+    StringComponent(..),
+    CompoundString(..),
+    VariableExport(..),
+    Pragma(..),
+    List(..),
+    ListItem(..),
+    Object(..),
+    parseObject,
+    parseDocument,
+    -- Kinds
+    PathKind(..),
+    FunctionKind(..),
   )
 where
 
@@ -32,7 +38,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 -- | The core spec types
 newtype Identifier = Identifier {toStr :: String}
-    deriving (Show)
+    deriving (Show, Ord, Eq)
 newtype CharEscape = CharEscape {getChar :: Char}
     deriving (Show)
 newtype FString = FString {identifier :: Identifier}
@@ -64,6 +70,15 @@ data ListItem = StringLit StringLiteral | CompString CompoundString | InnerList 
     deriving (Show)
 data List = List {items :: [ListItem], _name :: Maybe CompoundString, _ordered :: Bool}
     deriving (Show)
+
+-- | A parseable top-level object.
+data Object = Variable' Variable 
+               | VariableExport' VariableExport 
+               | Pragma' Pragma 
+               | StringLiteral' StringLiteral 
+               | CompoundString' CompoundString  
+               | List' List 
+               deriving (Show)
 
 -- | The parser type.
 type Parser = Parsec Void Text
@@ -281,7 +296,10 @@ parseUnorderedNamedList = do
 
 -- | Parse a block item
 parseBlockItem :: Parser ListItem
-parseBlockItem = (InnerList <$> (optional hspace1 >> parseBlock)) <|> (char '-' >> optional hspace1 >> parseListItem)
+parseBlockItem = optional hspace1 *> choice [
+    char '-' >> optional hspace1 >> parseListItem,
+    InnerList <$> (optional hspace1 >> parseBlock)
+    ]
 
 -- | Block Datum
 parseBlockDatum :: Parser [ListItem]
@@ -331,3 +349,22 @@ parseUnorderedNamedBlock = do
 
 wrap :: StringLiteral -> CompoundString
 wrap a = CompoundString [Literal $ text a]
+
+-- | Parse Any SampleTex Object
+parseObject :: Parser Object
+parseObject = choice 
+    [ Variable' <$> parseVariableDefinition,
+      VariableExport' <$> parseVariableExport,
+      Pragma' <$> parseAnyPragma,
+      StringLiteral' <$> parseStringLiteral,
+      CompoundString' <$> parseCompoundString,
+      List' <$> parseList,
+      List' <$> parseBlock
+    ]
+
+-- | Parses any SampleTex document
+parseDocument :: Parser [Object]
+parseDocument = some (parseObject <* choice [
+    eof,
+    void $ some eol
+    ])

@@ -28,6 +28,10 @@ library:
     - megaparsec
     - text
     - lens
+    - transformers
+    - containers
+    - filepath
+    - directory
 
 
 executables:
