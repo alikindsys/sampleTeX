@@ -22,7 +22,7 @@ import Control.Monad.Trans.Class (MonadTrans(lift))
 import Control.Monad.Trans.State.Lazy (StateT , runStateT, get, put)
 import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 
-import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..), Variable (..))
+import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..), Variable (..), VariableExport (..))
 
 data CompilationState = CompilationState
   { _file :: String,
@@ -67,3 +67,21 @@ texify (Variable' v) = do
     then lift . throwE $ "Variable " <> toStr ident <> " was already defined."
     else put $ state & variableMap .~ M.insert ident val vmap
   pure ""
+
+texify (VariableExport' (VariableExport [])) =
+  lift . throwE $ "Attempted compiling an empty list"
+texify (VariableExport' (VariableExport xs)) = do
+  state <- get
+  let _map = _variableMap state
+  let kvps = map (\ident -> (,) ident $ M.member ident _map) xs
+  let invalids = filter (not . snd) kvps
+  if not . null $ invalids
+    then
+      lift . throwE $
+        "The following variable(s) were never declared but tried exporting:"
+          <> concatMap ((<>) "\n" . toStr . fst) invalids
+    else pure $ concatMap tex $ M.toAscList _map
+  where
+    tex (ident, value) =
+      "\\newcommand{\\" <> toStr ident <> "}{" <> text value <> "}\n"
+    getVar _map key = _map M.! key
