@@ -61,6 +61,8 @@ runCompile m = runIdentity . runCompileT m
 
 texify :: Object  -> Compile String DocumentState String
 
+texify (StringLiteral' strlit) = pure $ text strlit
+
 texify (Variable' v) = do
   state <- get
   let ident = (identifier :: Variable -> Identifier) v
