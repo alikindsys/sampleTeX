@@ -112,3 +112,14 @@ texify (Pragma' (Begin k)) = do
         then put $ state & stack .~ (toStr k : stk) & initialized .~ True
         else put $ state & stack .~ (toStr k : stk)
   pure $ "\\begin{" <> toStr k <> "}\n"
+
+texify (Pragma' End) = do
+  state <- get
+  let stk = _stack state
+  if null stk
+    then
+      lift . throwE $
+        "Unescaped <End>. Please check if you have more <end>s then <begin>s."
+    else do
+      put $ state & stack .~ tail stk
+      pure $ "\\end{" <> head stk <> "}\n"
