@@ -25,7 +25,7 @@ import Control.Monad.Trans.Class (MonadTrans(lift))
 import Control.Monad.Trans.State.Lazy (StateT , runStateT, get, put)
 import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 
-import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..), Variable (..), VariableExport (..), Pragma (..), StringComponent(..), CharEscape (..))
+import Parser 
 
 data CompilationState = CompilationState
   { _file :: String,
