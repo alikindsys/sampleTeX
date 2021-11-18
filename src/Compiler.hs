@@ -16,11 +16,13 @@ import Data.Map (Map)
 import Data.Functor.Identity (Identity (runIdentity))
 
 import Control.Lens.TH (makeLenses)
+import Control.Lens ((.~), (&))
 
-import Control.Monad.Trans.State.Lazy (StateT , runStateT)
-import Control.Monad.Trans.Except (ExceptT, runExceptT)
+import Control.Monad.Trans.Class (MonadTrans(lift))
+import Control.Monad.Trans.State.Lazy (StateT , runStateT, get, put)
+import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 
-import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..))
+import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..), Variable (..))
 
 data CompilationState = CompilationState
   { _file :: String,
@@ -55,4 +57,13 @@ runCompile :: CompileT e s Identity a -> s -> Either e (a,s)
 runCompile m = runIdentity . runCompileT m
 
 texify :: Object  -> Compile String DocumentState String
-texify = undefined
+
+texify (Variable' v) = do
+  state <- get
+  let ident = (identifier :: Variable -> Identifier) v
+  let val = (value :: Variable -> StringLiteral) v
+  let vmap = _variableMap state
+  if M.member ident vmap
+    then lift . throwE $ "Variable " <> toStr ident <> " was already defined."
+    else put $ state & variableMap .~ M.insert ident val vmap
+  pure ""
