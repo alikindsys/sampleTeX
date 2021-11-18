@@ -166,3 +166,6 @@ texifyStringComponent (VariableReplacement (FString id)) = do
   if member
     then pure . text $ _map M.! id
     else error $ "The variable " <> toStr id <> " was not declared."
+
+texifyList :: List -> Compile String DocumentState String
+texifyList = undefined
