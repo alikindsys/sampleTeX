@@ -28,7 +28,7 @@ import Control.Monad.Trans.Class (MonadTrans(lift))
 import Control.Monad.Trans.State.Lazy (StateT , runStateT, get, put)
 import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 
-import System.FilePath ((</>))
+import System.FilePath ((</>), isAbsolute, makeValid)
 import System.Directory (makeAbsolute)
 
 import Parser 
@@ -267,3 +267,9 @@ texifyListItem (CompString v) = do
   s <- texify $ CompoundString' v
   pure $ "\\item{" <> s <> "}\n"
 texifyListItem (InnerList l) = texifyList l
+
+transformPwd :: FilePath -> FilePath -> FilePath
+transformPwd current transformation =
+  if isAbsolute transformation
+    then transformation
+    else makeValid $ current </> transformation
