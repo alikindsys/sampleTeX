@@ -126,3 +126,4 @@ texify (Pragma' End) = do
 
 texifyStringComponent ::  StringComponent -> Compile String DocumentState String
 texifyStringComponent (EscapeSequence c) = pure [Parser.getChar c]
+texifyStringComponent (Literal s) = pure s
