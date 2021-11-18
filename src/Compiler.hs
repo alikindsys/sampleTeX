@@ -169,3 +169,10 @@ texifyStringComponent (VariableReplacement (FString id)) = do
 
 texifyList :: List -> Compile String DocumentState String
 texifyList (List [] _ _) = lift $ throwE "Tried compiling an empty list."
+
+texifyListItem :: ListItem -> Compile String DocumentState String
+texifyListItem (StringLit (StringLiteral l)) = pure $ "\\item{" <> l <> "}\n"
+texifyListItem (CompString v) = do
+  s <- texify $ CompoundString' v
+  pure $ "\\item{" <> s <> "}\n"
+texifyListItem (InnerList l) = texifyList l
