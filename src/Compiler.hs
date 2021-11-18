@@ -67,6 +67,8 @@ texify (CompoundString' compstr) = do
   x <- traverse texifyStringComponent $ components compstr
   pure $ concatMap ("\n" <>) x
 
+texify (List' list) = texifyList list
+
 texify (Variable' v) = do
   state <- get
   let ident = (identifier :: Variable -> Identifier) v
