@@ -133,6 +133,18 @@ texify (Pragma' (Import pack funcs)) = do
         then ""
         else "[" <> concatMap ((<>) "," . texifyFunctionKind) funcs <> "]"
 
+texify (Pragma' (Class pack funcs)) = do
+  state <- get
+  if _hasClass state
+    then lift . throwE $ "Duplicate Document Class."
+    else put $ state & hasClass .~ True
+  pure $ "\\documentclass" <> funcStr <> "{" <> toStr pack <> "}\n"
+  where
+    funcStr =
+      if null funcs
+        then ""
+        else "[" <> concatMap ((<>) "," . texifyFunctionKind) funcs <> "]"
+
 texifyFunctionKind :: FunctionKind -> String
 texifyFunctionKind (Setting k v) = toStr k <> "=" <> v
 texifyFunctionKind (Function i) = toStr i
