@@ -5,13 +5,14 @@ module Compiler
   ( CompilationState (..),
     DocumentState (..),
     runCompileT,
+    runCompile,
   )
 where
 
 import qualified Data.Map as M
 import Data.Map (Map)
 
-import Data.Functor.Identity (Identity)
+import Data.Functor.Identity (Identity (runIdentity))
 
 import Control.Lens.TH (makeLenses)
 
@@ -48,3 +49,6 @@ type CompileIO e s = CompileT e s IO
 
 runCompileT :: (Monad m) => CompileT e s m a -> s -> m (Either e (a, s))
 runCompileT m = runExceptT . runStateT m 
+
+runCompile :: CompileT e s Identity a -> s -> Either e (a,s)
+runCompile m = runIdentity . runCompileT m
