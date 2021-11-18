@@ -6,6 +6,7 @@ module Compiler
     DocumentState (..),
     runCompileT,
     runCompile,
+    texify,
   )
 where
 
@@ -19,7 +20,7 @@ import Control.Lens.TH (makeLenses)
 import Control.Monad.Trans.State.Lazy (StateT , runStateT)
 import Control.Monad.Trans.Except (ExceptT, runExceptT)
 
-import Parser (PathKind, Identifier (..), StringLiteral (..))
+import Parser (PathKind, Identifier (..), StringLiteral (..), Object (..))
 
 data CompilationState = CompilationState
   { _file :: String,
@@ -52,3 +53,6 @@ runCompileT m = runExceptT . runStateT m
 
 runCompile :: CompileT e s Identity a -> s -> Either e (a,s)
 runCompile m = runIdentity . runCompileT m
+
+texify :: Object  -> Compile String DocumentState String
+texify = undefined
