@@ -128,3 +128,10 @@ texify (Pragma' End) = do
 texifyStringComponent ::  StringComponent -> Compile String DocumentState String
 texifyStringComponent (EscapeSequence c) = pure [Parser.getChar c]
 texifyStringComponent (Literal s) = pure s
+texifyStringComponent (VariableReplacement (FString id)) = do
+  state <- get
+  let _map = _variableMap state
+  let member = M.member id _map
+  if member
+    then pure . text $ _map M.! id
+    else error $ "The variable " <> toStr id <> " was not declared."
