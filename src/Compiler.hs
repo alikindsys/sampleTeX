@@ -44,6 +44,15 @@ data DocumentState = DocumentState
   }
   deriving (Show)
 
+initialDoc =
+  DocumentState
+    { _variableMap = M.empty,
+      _stack = [],
+      _hasClass = False,
+      _initialized = False,
+      _compilation = CompilationState {_pwd = "", _file = "", _kind = SampleTex}
+    }
+
 makeLenses ''CompilationState
 makeLenses ''DocumentState
 
