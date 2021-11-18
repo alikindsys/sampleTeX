@@ -28,11 +28,12 @@ import Control.Monad.Trans.Class (MonadTrans(lift))
 import Control.Monad.Trans.State.Lazy (StateT , runStateT, get, put)
 import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 
-import System.FilePath ((</>), isAbsolute, makeValid)
+import System.FilePath ((</>), isAbsolute, makeValid, takeFileName, takeDirectory)
 import System.Directory (makeAbsolute)
 
 import Parser 
 import Text.Megaparsec
+import GHC.IO (unsafePerformIO)
 
 data CompilationState = CompilationState
   { _file :: String,
@@ -209,6 +210,21 @@ texify (Pragma' (Class pack funcs)) = do
       if null funcs
         then ""
         else "[" <> concatMap ((<>) "," . texifyFunctionKind) funcs <> "]"
+
+texify (Pragma' (Include path kind)) = do
+  state <- get
+  let current = _compilation state
+  let newPath = transformPwd (_pwd current) path
+  let (file, npath) = ((,) <$> takeFileName <*> takeDirectory) newPath
+  let compilation =
+        unsafePerformIO $
+          runCompileT
+            compileFile
+            CompilationState {_pwd = npath, _file = file, _kind = kind}
+  case compilation of
+    Left s -> lift $ throwE s
+    Right (x, _) -> pure x
+
 
 texifyFunctionKind :: FunctionKind -> String
 texifyFunctionKind (Setting k v) = toStr k <> "=" <> v
