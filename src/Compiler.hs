@@ -31,3 +31,4 @@ data DocumentState = DocumentState
   deriving (Show)
 
 makeLenses ''CompilationState
+makeLenses ''DocumentState
