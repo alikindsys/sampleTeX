@@ -165,7 +165,7 @@ texifyStringComponent (VariableReplacement (FString id)) = do
   let member = M.member id _map
   if member
     then pure . text $ _map M.! id
-    else error $ "The variable " <> toStr id <> " was not declared."
+    else lift . throwE $ "The variable " <> toStr id <> " was not declared."
 
 texifyList :: List -> Compile String DocumentState String
 texifyList = undefined
