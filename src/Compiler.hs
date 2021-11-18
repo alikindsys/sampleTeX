@@ -63,6 +63,10 @@ texify :: Object  -> Compile String DocumentState String
 
 texify (StringLiteral' strlit) = pure $ text strlit
 
+texify (CompoundString' compstr) = do
+  x <- traverse texifyStringComponent $ components compstr
+  pure $ concatMap ("\n" <>) x
+
 texify (Variable' v) = do
   state <- get
   let ident = (identifier :: Variable -> Identifier) v
