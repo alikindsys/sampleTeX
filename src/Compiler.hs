@@ -168,4 +168,4 @@ texifyStringComponent (VariableReplacement (FString id)) = do
     else lift . throwE $ "The variable " <> toStr id <> " was not declared."
 
 texifyList :: List -> Compile String DocumentState String
-texifyList = undefined
+texifyList (List [] _ _) = lift $ throwE "Tried compiling an empty list."
