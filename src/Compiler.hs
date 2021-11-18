@@ -125,6 +125,14 @@ texify (Pragma' End) = do
       put $ state & stack .~ tail stk
       pure $ "\\end{" <> head stk <> "}\n"
 
+texify (Pragma' (Import pack funcs)) = do
+  pure $ "\\usepackage" <> funcStr <> "{" <> toStr pack <> "}\n"
+  where
+    funcStr =
+      if null funcs
+        then ""
+        else "[" <> concatMap ((<>) "," . texifyFunctionKind) funcs <> "]"
+
 texifyFunctionKind :: FunctionKind -> String
 texifyFunctionKind (Setting k v) = toStr k <> "=" <> v
 texifyFunctionKind (Function i) = toStr i
