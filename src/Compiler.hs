@@ -26,6 +26,7 @@ import Control.Monad.Trans.State.Lazy (StateT , runStateT, get, put)
 import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 
 import Parser 
+import Text.Megaparsec
 
 data CompilationState = CompilationState
   { _file :: String,
@@ -58,6 +59,25 @@ runCompileT m = runExceptT . runStateT m
 
 runCompile :: CompileT e s Identity a -> s -> Either e (a,s)
 runCompile m = runIdentity . runCompileT m
+
+-- | This requires an already transformed, canonical path to work.
+compile :: String -> T.Text -> Compile String DocumentState String
+compile path text = do
+  state <- get
+  case parse parseDocument path text of
+    Left err ->
+      lift . throwE $
+        "[Parser Error] Failed while parsing : "
+          <> path
+          <> "\n"
+          <> errorBundlePretty err
+    Right objs -> do
+      let compiled = runCompile (traverse texify objs) state
+      case compiled of
+        Left x ->
+          lift . throwE $
+            "[Compilation Error] Failed while compiling : " <> path <> "\n" <> x
+        Right (tex, _) -> pure $ concatMap (<> "\n") tex
 
 texify :: Object  -> Compile String DocumentState String
 
