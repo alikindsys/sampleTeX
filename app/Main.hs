@@ -10,6 +10,8 @@ import Prettyprinter
 import Prettyprinter.Render.Terminal
 import Parser
 import System.FilePath
+import Compiler
+import System.Directory
 
 main :: IO ()
 main = someFunc
@@ -29,6 +31,22 @@ spec =
         "to compile to PDF set your preferred LaTeX engine",
         "and make sure its on %PATH%"
       ]
+
+toTex :: FilePath -> IO (Maybe FilePath)
+toTex path = do
+    absolutePath <- makeAbsolute path
+    let (file, dir,base) = ((,,) <$> takeFileName <*> takeDirectory <*> takeBaseName) absolutePath
+    let texDir = dir </> "compilation" </> "tex"
+    ext <- getKind' file
+    state <- runCompileT compileFile $ CompilationState {_file=file, _pwd=dir, _kind=ext}
+    case state of
+      Left s -> do {err "[samplec] Cannot compile " <> putStr file <> err " to LaTeX.\n" <> putStr s; pure Nothing}
+      Right (x, _) -> do {
+          createDirectoryIfMissing True texDir;
+          writeFile (texDir </> base <> ".tex") x;
+          info "[samplec] Compilation of " <> putStr file <> info " to LaTeX was successful.\n";
+          pure $ Just (texDir </> base <> ".tex")
+      }
 
 getKind :: FilePath -> Maybe PathKind
 getKind ".sample" = Just SampleTex
