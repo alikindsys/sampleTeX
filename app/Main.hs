@@ -8,6 +8,7 @@ import System.Console.CmdArgs
 import System.IO
 import Prettyprinter
 import Prettyprinter.Render.Terminal
+import Parser
 
 main :: IO ()
 main = someFunc
@@ -27,6 +28,11 @@ spec =
         "to compile to PDF set your preferred LaTeX engine",
         "and make sure its on %PATH%"
       ]
+
+getKind :: FilePath -> Maybe PathKind
+getKind ".sample" = Just SampleTex
+getKind ".tex" = Just LaTeX
+getKind _ = Nothing
 
 -- Logging Stuff --
 err = generic style stderr
