@@ -45,6 +45,11 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - sampletex
+    - cmdargs
+    - prettyprinter
+    - prettyprinter-ansi-terminal
+    - typed-process
+    - bytestring
 
 tests:
   sampletex-test:
