@@ -21,6 +21,9 @@ description:         Please see the README on GitHub at <https://github.com/rori
 
 dependencies:
 - base >= 4.7 && < 5
+- filepath
+- directory
+
 
 library:
   source-dirs: src
@@ -30,8 +33,6 @@ library:
     - lens
     - transformers
     - containers
-    - filepath
-    - directory
 
 
 executables:
