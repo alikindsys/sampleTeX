@@ -15,6 +15,7 @@ import System.Directory
 import System.Exit (ExitCode (ExitSuccess, ExitFailure))
 import Data.ByteString.Lazy (ByteString)
 import qualified Data.ByteString.Lazy as BL
+import System.Process.Typed
 
 main :: IO ()
 main = someFunc
@@ -49,6 +50,22 @@ toTex path = do
           writeFile (texDir </> base <> ".tex") x;
           info "[samplec] Compilation of " <> putStr file <> info " to LaTeX was successful.\n";
           pure $ Just (texDir </> base <> ".tex")
+      }
+
+toPDF :: String -> Maybe FilePath -> IO ()
+toPDF engine Nothing = err "[samplec] Attemped compiling an unexisting file with " <> putStr engine <> err " LaTeX engine\n"
+toPDF engine (Just tex) = do
+    exec <- findExecutable engine
+    let (file, dir,base) = ((,,) <$> takeFileName <*> takeDirectory <*> takeBaseName) tex
+    pdfDir <- makeAbsolute $ dir </> ".." </> "pdf"
+    logDir <- makeAbsolute $ dir </> ".." </> "logs"
+    case exec of
+      Nothing -> err "[samplec] " <> putStr engine <> err " couldn't be found. Program exited"
+      Just executable -> do {
+          info "[samplec] PDF Conversion of " <> putStr file <> info " with " <> putStr engine <> info " started.\n";
+          createDirectoryIfMissing True pdfDir;
+          prog <- readProcess $  setWorkingDir pdfDir $ proc executable [tex];
+          handleThis (file,engine,logDir) prog;
       }
 
 handleThis :: (String, String,String) -> (ExitCode, ByteString, ByteString) -> IO ()
