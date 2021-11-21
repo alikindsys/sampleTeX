@@ -16,6 +16,8 @@ import System.Exit (ExitCode (ExitSuccess, ExitFailure))
 import Data.ByteString.Lazy (ByteString)
 import qualified Data.ByteString.Lazy as BL
 import System.Process.Typed
+import Data.Foldable
+import Control.Monad ((>=>))
 
 main :: IO ()
 main = someFunc
@@ -35,6 +37,11 @@ spec =
         "to compile to PDF set your preferred LaTeX engine",
         "and make sure its on %PATH%"
       ]
+
+exec :: SampleC -> IO ()
+exec (SampleC [] _) = err "[samplec] No files were provided. Program exited.\n" <> info "Hint: Use --help\n"
+exec (SampleC xs Nothing) = traverse_ toTex xs
+exec (SampleC xs (Just x)) = traverse_ (toTex >=> toPDF x) xs  
 
 toTex :: FilePath -> IO (Maybe FilePath)
 toTex path = do
