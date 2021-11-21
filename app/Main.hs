@@ -9,6 +9,7 @@ import System.IO
 import Prettyprinter
 import Prettyprinter.Render.Terminal
 import Parser
+import System.FilePath
 
 main :: IO ()
 main = someFunc
@@ -33,6 +34,15 @@ getKind :: FilePath -> Maybe PathKind
 getKind ".sample" = Just SampleTex
 getKind ".tex" = Just LaTeX
 getKind _ = Nothing
+
+-- | Blocking `getKind` using the IO Monad
+-- | Wrote it that way since i could expand `getKind` alone and never mess with this.
+getKind' :: FilePath -> IO PathKind
+getKind' path = do
+    let kind = getKind $ takeExtension path
+    case kind of
+      Nothing -> error "Unsupported file type."
+      Just pk -> pure pk
 
 -- Logging Stuff --
 err = generic style stderr
