@@ -20,7 +20,9 @@ import Data.Foldable
 import Control.Monad ((>=>))
 
 main :: IO ()
-main = someFunc
+main = do
+    it <- cmdArgs spec
+    exec it
 
 data SampleC = SampleC {files :: [FilePath], engine :: Maybe String}
   deriving (Show, Data, Typeable)
