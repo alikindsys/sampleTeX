@@ -12,6 +12,9 @@ import Parser
 import System.FilePath
 import Compiler
 import System.Directory
+import System.Exit (ExitCode (ExitSuccess, ExitFailure))
+import Data.ByteString.Lazy (ByteString)
+import qualified Data.ByteString.Lazy as BL
 
 main :: IO ()
 main = someFunc
@@ -47,6 +50,15 @@ toTex path = do
           info "[samplec] Compilation of " <> putStr file <> info " to LaTeX was successful.\n";
           pure $ Just (texDir </> base <> ".tex")
       }
+
+handleThis :: (String, String,String) -> (ExitCode, ByteString, ByteString) -> IO ()
+handleThis (file, engine,_) (ExitSuccess, _, _) = done "[samplec] PDF Conversion of " <> putStr file <> done " with " <> putStr engine <> done " finished.\n"
+handleThis (file, engine,logDir) (ExitFailure x, log, stderr) = do
+    createDirectoryIfMissing True $ logDir </> engine
+    err "[" <> putStr engine <> err "] An error occoured! See the log files under log/"<> putStr engine <> err "/\n"
+    err "[" <> putStr engine <> err "] Exited with code " <> putStr (show x) <> err ".\n" 
+    BL.writeFile  (logDir </> engine </> "latest-stdout.log") log
+    BL.writeFile (logDir </> engine </> "latest-stderr.log") stderr
 
 getKind :: FilePath -> Maybe PathKind
 getKind ".sample" = Just SampleTex
