@@ -21,6 +21,9 @@ description:         Please see the README on GitHub at <https://github.com/rori
 
 dependencies:
 - base >= 4.7 && < 5
+- filepath
+- directory
+
 
 library:
   source-dirs: src
@@ -30,12 +33,10 @@ library:
     - lens
     - transformers
     - containers
-    - filepath
-    - directory
 
 
 executables:
-  sampletex-exe:
+  samplec:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -44,6 +45,11 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - sampletex
+    - cmdargs
+    - prettyprinter
+    - prettyprinter-ansi-terminal
+    - typed-process
+    - bytestring
 
 tests:
   sampletex-test:
