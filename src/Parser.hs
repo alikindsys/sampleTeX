@@ -175,8 +175,17 @@ parseAnyPragma = char '#' *> choice [
         parseImport,
         parseInclude,
         parseBegin,
-        parseClass
+        parseClass,
+        parseSection
     ]
+
+parseSection :: Parser Pragma
+parseSection = do 
+    void $ parseKeyword "sec"
+    void hspace1
+    strLit <- parseStringLiteral
+    let n = text strLit
+    pure $ Section {_name=n}
 
 parseInclude :: Parser Pragma
 parseInclude = do 
