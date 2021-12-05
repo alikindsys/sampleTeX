@@ -61,6 +61,7 @@ data Pragma = Include {path :: String, kind :: PathKind}
             | Class {package :: Identifier, functions :: [FunctionKind]}
             | End 
             | Init
+            | Section {_name :: String}
             deriving (Show)
 data PathKind = SampleTex | LaTeX
     deriving (Show)
@@ -174,8 +175,17 @@ parseAnyPragma = char '#' *> choice [
         parseImport,
         parseInclude,
         parseBegin,
-        parseClass
+        parseClass,
+        parseSection
     ]
+
+parseSection :: Parser Pragma
+parseSection = do 
+    void $ parseKeyword "sec"
+    void hspace1
+    strLit <- parseStringLiteral
+    let n = text strLit
+    pure $ Section {_name=n}
 
 parseInclude :: Parser Pragma
 parseInclude = do 

@@ -191,6 +191,9 @@ texify (Pragma' End) = do
       put $ state & stack .~ tail stk
       pure $ "\\end{" <> head stk <> "}\n"
 
+texify (Pragma' (Section s)) = do
+  pure $ "\\section{" <> s <> "}\n"
+
 texify (Pragma' (Import pack funcs)) = do
   pure $ "\\usepackage" <> funcStr <> "{" <> toStr pack <> "}\n"
   where
