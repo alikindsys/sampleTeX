@@ -61,6 +61,7 @@ data Pragma = Include {path :: String, kind :: PathKind}
             | Class {package :: Identifier, functions :: [FunctionKind]}
             | End 
             | Init
+            | Section {_name :: String}
             deriving (Show)
 data PathKind = SampleTex | LaTeX
     deriving (Show)
