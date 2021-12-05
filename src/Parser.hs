@@ -62,6 +62,7 @@ data Pragma = Include {path :: String, kind :: PathKind}
             | End 
             | Init
             | Section {_name :: String}
+            | NewPage
             deriving (Show)
 data PathKind = SampleTex | LaTeX
     deriving (Show)
