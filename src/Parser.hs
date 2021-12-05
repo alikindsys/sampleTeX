@@ -62,6 +62,7 @@ data Pragma = Include {path :: String, kind :: PathKind}
             | End 
             | Init
             | Section {_name :: String}
+            | NewPage
             deriving (Show)
 data PathKind = SampleTex | LaTeX
     deriving (Show)
@@ -176,7 +177,8 @@ parseAnyPragma = char '#' *> choice [
         parseInclude,
         parseBegin,
         parseClass,
-        parseSection
+        parseSection,
+        parseNewPage
     ]
 
 parseSection :: Parser Pragma
@@ -186,6 +188,9 @@ parseSection = do
     strLit <- parseStringLiteral
     let n = text strLit
     pure $ Section {_name=n}
+
+parseNewPage :: Parser Pragma
+parseNewPage = parseKeyword "page" *> pure NewPage
 
 parseInclude :: Parser Pragma
 parseInclude = do 
