@@ -194,6 +194,9 @@ texify (Pragma' End) = do
 texify (Pragma' (Section s)) = do
   pure $ "\\section{" <> s <> "}\n"
 
+texify (Pragma' (NewPage)) = do
+  pure $ "\\newpage{}\n"
+
 texify (Pragma' (Import pack funcs)) = do
   pure $ "\\usepackage" <> funcStr <> "{" <> toStr pack <> "}\n"
   where
